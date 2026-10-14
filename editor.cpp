@@ -13,7 +13,7 @@ using namespace std;
 
 //Estructura que encapsula al archivo entero
 struct Editor {
-	editor cabeza, cola;
+	nodoE cabeza, cola;
 	int cant_Lineas;
 };
 
@@ -22,7 +22,7 @@ struct Editor {
 struct nodo_editor{
 
 	int n_palabras;
-	editor sig;
+	nodoE sig;
 	Linea inicio, fin;
 	
 };
@@ -51,21 +51,20 @@ struct nodo_diccionario{
 
 
 
-Archivo crearArchivo(){
+editor crearEditor(){
 
-	Archivo a = new(Editor);
+	editor E = new(Editor);
 	
-	a->cabeza = NULL;
-	a->cola = NULL;
-	a->cant_Lineas = 0;
+	E->cabeza = NULL;
+	E->cola = NULL;
+	E->cant_Lineas = 0;
 
-	return a;
-
+	return E;
 }
 
-editor CrearEditor(){
+nodoE crearNodoEditor(){
 
-	editor e = new(nodo_editor);
+	nodoE e = new(nodo_editor);
 
 	e->fin = NULL;
 	e->inicio = NULL;
@@ -94,7 +93,6 @@ Diccionario crearDic() {
 	D->raiz = NULL;
 
 	return D;
-
 }
 
 nodoD crearDiccionario(){
@@ -106,7 +104,6 @@ nodoD crearDiccionario(){
 	d->tope = -1;
 
 	return d;
-
 }
 
 
@@ -114,13 +111,54 @@ TipoRetorno InsertarLinea(editor & e){
 // Inserta una nueva línea vacía al final del texto.
 // Este requerimiento debe ser resuelto en O(1) peor caso.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	
+    nodoE nE = crearNodoEditor();
+	if (e->cant_Lineas > 0) {
+		e->cola->sig = nE;
+
+	}else{
+		e->cabeza = nE;
+
+	} 
+	e->cola = nE;
+	e->cant_Lineas++;
+
+	return OK;
 }
 
 TipoRetorno InsertarLineaEnPosicion(editor & e, Posicion posicionLinea){
 // Inserta una nueva línea vacía en la posición indicada.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	if(posicionLinea < 0 && posicionLinea >= e->cant_Lineas){
+		return ERROR;
+	}else{
+		nodoE nuevo = crearNodoEditor();
+
+		if(e->cant_Lineas == 0){
+			// vacio
+			e->cabeza = nuevo;
+			e->cola = nuevo;
+		}else if(posicionLinea == 0){
+			// al inicio
+			nuevo->sig = e->cabeza;
+			e->cabeza = nuevo;
+		}else if(e->cant_Lineas == posicionLinea){
+			// al final
+			e->cola->sig = nuevo;
+			e->cola = nuevo;
+		}else{
+			// al medio
+			nodoE it = e->cabeza;
+			for(int i = 0; i < posicionLinea - 1; i++){
+				it = it->sig;
+			}
+			nuevo->sig = it->sig;
+			it->sig = nuevo;
+		}
+		
+		e->cant_Lineas++; 
+	}
+	return OK;
 }
 
 TipoRetorno BorrarLinea(editor & e, Posicion posicionLinea){

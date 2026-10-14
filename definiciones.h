@@ -4,7 +4,7 @@
 // Estructuras de Datos y Algoritmos - Obligatorio 2026
 // Tecnologo en Informatica FIng - DGETP - UTEC
 //
-// definiciones.h
+// definiciones.hS
 // Modulo para definiciones generales del proyecto como constantes, etc.
 
 enum _retorno{
@@ -13,9 +13,9 @@ enum _retorno{
 
 typedef enum _retorno TipoRetorno;
 
-typedef struct Editor * Archivo;
+typedef struct Editor * editor;
 
-typedef struct nodo_editor * editor;
+typedef struct nodo_editor * nodoE;
 
 typedef struct nodo_linea * Linea;
 
@@ -34,3 +34,4 @@ typedef char* Cadena;
 
 #endif
 
+typedef char* Cadena;

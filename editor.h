@@ -13,9 +13,9 @@
 
 // Operaciones Relativas a las lineas (al documento)
 
-Archivo crearArchivo();
+editor crearEditor();
 
-editor CrearEditor();
+nodoE crearNodoEditor();
 
 Linea crearLinea();
 
