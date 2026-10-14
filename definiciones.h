@@ -13,7 +13,11 @@ enum _retorno{
 
 typedef enum _retorno TipoRetorno;
 
+typedef struct nodo_editor * editor;
+typedef struct nodo_linea * Linea;
 typedef char* Cadena;
+typedef struct diccionario * Diccionario;
+
 
 typedef unsigned int Posicion;
 
