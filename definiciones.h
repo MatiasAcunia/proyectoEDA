@@ -13,13 +13,19 @@ enum _retorno{
 
 typedef enum _retorno TipoRetorno;
 
+typedef struct Editor * Archivo;
+
 typedef struct nodo_editor * editor;
+
 typedef struct nodo_linea * Linea;
-typedef char* Cadena;
+
 typedef struct diccionario * Diccionario;
 
+typedef struct nodo_diccionario * nodoD;
 
 typedef unsigned int Posicion;
+
+typedef char* Cadena;
 
 
 #define MAX_COMANDO 75

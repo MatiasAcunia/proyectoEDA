@@ -13,8 +13,16 @@
 
 // Operaciones Relativas a las lineas (al documento)
 
+Archivo crearArchivo();
+
 editor CrearEditor();
-// Crea la estructura editor.
+
+Linea crearLinea();
+
+Diccionario crearDic();
+
+nodoD crearDiccionario();
+
 
 TipoRetorno InsertarLinea(editor & e);
 // Inserta una nueva línea vacía al final del texto.

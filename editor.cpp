@@ -11,44 +11,104 @@
 
 using namespace std;
 
+//Estructura que encapsula al archivo entero
 struct Editor {
 	editor cabeza, cola;
 	int cant_Lineas;
 };
 
 
-//Estructura para el manejo de lineas de tipo lista simplemente enlazada
+//Estructura para el manejo de la linea individual; nodo de Editor; lista simplemente enlazada
 struct nodo_editor{
-	int lineas;
+
 	int n_palabras;
 	editor sig;
 	Linea inicio, fin;
-	/* acá deben figurar los campos/estructuras que usted considere necesarios
-	para implementar el editor. Ej: texto, diccionario, etc. Recordar que cada módulo
-	debe implementarse independientemente e incluirse */
+	
 };
 
-//Estructura para el manejo de lineas de tipo lista doble enlazada
+//Estructura para el manejo de palabras; nodo de linea; lista simplemente enlazada
 struct nodo_linea{
 	Cadena palabra;
-	int tope;
 	Linea sig;
+	int tope;
 };
-//Estructura para el manejo de lineas de tipo abb
+
+//Estructura para el manejo de diccionario encapsulado; 
+struct diccionario {
+
+	nodoD raiz;
+	int nPalabras;
+
+};
+
+//Estructura de nodos de diccionario; ABB
 struct nodo_diccionario{
-	char* palabra;
-	Diccionario iz, de;
+	Cadena palabra;
+	nodoD iz, de;
+	int tope;
 };
 
 
+
+Archivo crearArchivo(){
+
+	Archivo a = new(Editor);
+	
+	a->cabeza = NULL;
+	a->cola = NULL;
+	a->cant_Lineas = 0;
+
+	return a;
+
+}
 
 editor CrearEditor(){
-// Crea la estructura editor.
+
 	editor e = new(nodo_editor);
-	/* crear el resto de las estructuras que se incluyan en el editor
-	usando las funciones correspondientes de cada modulo */
+
+	e->fin = NULL;
+	e->inicio = NULL;
+	e->n_palabras = 0;
+	e->sig = NULL;
+	
 	return e;
 }
+
+
+Linea crearLinea(){
+
+	Linea l = new(nodo_linea);
+
+	l->sig = NULL;
+	l->tope = -1;
+
+	return l;
+}
+
+Diccionario crearDic() {
+
+	Diccionario D = new(diccionario);
+
+	D->nPalabras = 0;
+	D->raiz = NULL;
+
+	return D;
+
+}
+
+nodoD crearDiccionario(){
+
+	nodoD d = new(nodo_diccionario);
+	
+	d->de = NULL;
+	d->iz = NULL;
+	d->tope = -1;
+
+	return d;
+
+}
+
 
 TipoRetorno InsertarLinea(editor & e){
 // Inserta una nueva línea vacía al final del texto.
