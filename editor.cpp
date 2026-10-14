@@ -15,12 +15,12 @@ using namespace std;
 struct Editor {
 	nodoE cabeza, cola;
 	int cant_Lineas;
+	Diccionario dC;
 };
 
 
 //Estructura para el manejo de la linea individual; nodo de Editor; lista simplemente enlazada
 struct nodo_editor{
-
 	int n_palabras;
 	nodoE sig;
 	Linea inicio, fin;
@@ -31,12 +31,12 @@ struct nodo_editor{
 struct nodo_linea{
 	Cadena palabra;
 	Linea sig;
+	Linea ant;
 	int tope;
 };
 
 //Estructura para el manejo de diccionario encapsulado; 
 struct diccionario {
-
 	nodoD raiz;
 	int nPalabras;
 
@@ -58,6 +58,7 @@ editor crearEditor(){
 	E->cabeza = NULL;
 	E->cola = NULL;
 	E->cant_Lineas = 0;
+	E->dC = crearDic();
 
 	return E;
 }
