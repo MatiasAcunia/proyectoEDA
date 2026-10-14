@@ -39,6 +39,7 @@ struct nodo_linea{
 struct diccionario {
 	nodoD raiz;
 	int nPalabras;
+	
 
 };
 
@@ -130,7 +131,7 @@ TipoRetorno InsertarLinea(editor & e){
 TipoRetorno InsertarLineaEnPosicion(editor & e, Posicion posicionLinea){
 // Inserta una nueva línea vacía en la posición indicada.
 // Ver más detalles en la letra del obligatorio.
-	if(posicionLinea < 0 && posicionLinea >= e->cant_Lineas){
+	if(posicionLinea < 0 || posicionLinea > e->cant_Lineas){
 		return ERROR;
 	}else{
 		nodoE nuevo = crearNodoEditor();
@@ -165,7 +166,57 @@ TipoRetorno InsertarLineaEnPosicion(editor & e, Posicion posicionLinea){
 TipoRetorno BorrarLinea(editor & e, Posicion posicionLinea){
 // Borra la línea en la posición indicada.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	if(posicionLinea < 0 || posicionLinea >= e->cant_Lineas){
+		return ERROR;
+	}else{
+	if(e->cant_Lineas == 0){
+			// vacio
+			return ERROR;
+
+	}else if(posicionLinea == 0){
+		// al inicio
+		nodoE temp = e->cabeza;
+		if (e->cant_Lineas > 1) {
+			e->cabeza = e->cabeza->sig;
+		}else {
+			e->cabeza = NULL;
+			e->cola = NULL;
+		}	
+		delete temp;
+
+	}else if(e->cant_Lineas - 1 == posicionLinea){
+		// al final
+		nodoE temp = e->cola;
+
+		if (e->cant_Lineas > 1) {
+		nodoE it = e->cabeza;
+		for(int i = 0; i < posicionLinea - 1; i++){
+			it = it->sig;
+		}
+		e->cola = it;
+		e->cola->sig = NULL;
+	    }else{
+			e->cabeza = NULL;
+			e->cola = NULL;
+
+		}
+
+		delete temp;
+		
+	}else{
+		// al medio
+		nodoE it = e->cabeza;
+		for(int i = 0; i < posicionLinea - 1; i++){
+			it = it->sig;
+		}
+		nodoE temp = it->sig;
+		it->sig = temp->sig;
+		delete temp;
+	}
+	
+	e->cant_Lineas--;
+	}
+	return OK;
 }
 
 TipoRetorno BorrarTodo(editor & e){
