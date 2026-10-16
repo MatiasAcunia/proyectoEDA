@@ -41,6 +41,10 @@ TipoRetorno BorrarTodo(editor & e);
 // Borra todas las líneas del texto.
 // Ver más detalles en la letra del obligatorio.
 
+void auxBT (nodoE iter);
+
+void auxBPT (Lista iter);
+
 TipoRetorno BorrarOcurrenciasPalabraEnTexto(editor & e, Cadena palabraABorrar);
 // Borra todas las ocurrencias de una palabra en el texto.
 // Ver más detalles en la letra del obligatorio.

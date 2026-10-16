@@ -222,19 +222,154 @@ TipoRetorno BorrarLinea(editor & e, Posicion posicionLinea){
 TipoRetorno BorrarTodo(editor & e){
 // Borra todas las líneas del texto.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+
+	auxBT (e->cabeza);
+
+	e.cant_Lineas = 0;
+	e.cabeza = NULL;
+	e.cola = NULL;
+
+	return OK;
 }
+
+void auxBT (nodoE iter) {
+	if (iter != NULL) {
+
+		auxBT(iter->sig);
+		auxBPT(iter->inicio);
+		delete iter;
+	} 
+
+}
+
+void auxBPT (Linea iter){
+	if (iter != NULL){
+
+		auxBPT(iter->sig);
+		delete[] iter->Cadena;
+		delete iter;
+	}
+}
+
+TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra){
+// Borra la palabra en la posición indicada.
+// Ver más detalles en la letra del obligatorio.
+
+	if(posicionLinea < 0 || posicionLinea >= e->cant_Lineas){
+		return ERROR;
+	}else{
+
+    int i = 0;
+	nodoE iter = e.cabeza;
+
+	while (i != posicionLinea){
+
+		iter = iter->sig;
+		i++;
+
+	}
+
+	if(iter.n_palabras == 0) return ERROR;
+
+	auxBP(iter.inicio);
+
+
+
+	return OK;
+	}
+}
+
+void auxBP(Linea iter, int posicionPalabra) {
+
+	int i = 0;
+	while (i != posicionPalabra){
+		iter = iter->sig;
+		i++;
+	}
+
+	if (iter->n_palabras > 1){
+
+		if (iter->ant == NULL){
+			nodoE->cabeza = iter->sig;
+			nodoE->cabeza->ant = NULL;
+
+		}else if (iter.sig == NULL){
+			nodoE->cola = iter.ant;
+			nodoE->cola->sig = NULL;
+
+		}else {
+		iter->sig->ant = iter->ant;
+		iter->ant->sig = iter->sig;
+
+		}
+    }else {
+		nodoE->inicio = NULL;
+		nodoE->fin = NULL;
+	}
+	delete iter;
+	nodoE->n_palabras--;
+}
+
 
 TipoRetorno BorrarOcurrenciasPalabraEnTexto(editor & e, Cadena palabraABorrar){
 // Borra todas las ocurrencias de una palabra en el texto.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	if(e != NULL){
+		auxBOP(e->cabeza, palabraABorrar);
+		return OK;
+	}else{
+		return ERROR;
+	}
+}
+
+void auxBOP(nodoE iter, int palabraABorrar, int indiceHorizontal){
+	if(iter){
+		if(iter->inicio){
+			int indiceVertical = 0;
+			borrarEnLinea(inicio, palabraABorrar, indiceVertical);
+			auxBOP(iter->sig, palabraABorrar);
+		}
+	}
+}
+
+void borrarEnLinea(Linea iter, int palabraABorrar, int indiceVertical){
+	if(iter){
+		if(iter->palabra == palabraABorrar){
+			auxBP(iter, indiceVertical);
+		}
+		borrarEnLinea(inicio->sig, palabraABorrar, indiceVertical + 1);
+	}
 }
 
 TipoRetorno ImprimirTexto(editor & e){
 // Imprime el texto por pantalla.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	if(e){
+		auxIT(e, e->cabeza, 1);
+		return OK;
+	}else{
+		return ERROR;
+	}
+}
+
+// avanzo horizontalmente
+void auxIT(editor &e, nodoE iter, int indice){
+	printf("Salida:\n");
+
+	if(e->cabeza != NULL){
+		printf("%d: ", indice);
+		imprimirLinea(iter->inicio);
+		auxIT(e, iter->sig, indice + 1);
+		printf("\n");
+	}
+}
+// avanzo verticalmente
+void imprimirLinea(Linea linea){
+	if(linea != NULL){
+		printf("%d", linea->palabra);
+		printf(" ");
+		imprimirLinea(linea->sig);
+	}
 }
 
 TipoRetorno ComprimirTexto(editor & e){
@@ -249,11 +384,6 @@ TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicio
 	return NO_IMPLEMENTADA;
 }
 
-TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra){
-// Borra la palabra en la posición indicada.
-// Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
-}
 
 TipoRetorno BorrarOcurrenciasPalabraEnLinea(editor & e, Posicion posicionLinea, Cadena palabraABorrar){
 // Borra todas las ocurrencias de una palabra en la línea indicada.
