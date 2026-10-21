@@ -11,80 +11,397 @@
 
 using namespace std;
 
+//Estructura que encapsula al archivo entero
 struct Editor {
-	editor cabeza, cola;
+	nodoE cabeza, cola;
 	int cant_Lineas;
+	Diccionario dC;
 };
 
 
-//Estructura para el manejo de lineas de tipo lista simplemente enlazada
+//Estructura para el manejo de la linea individual; nodo de Editor; lista simplemente enlazada
 struct nodo_editor{
-	int lineas;
 	int n_palabras;
-	editor sig;
+	nodoE sig;
 	Linea inicio, fin;
-	/* acá deben figurar los campos/estructuras que usted considere necesarios
-	para implementar el editor. Ej: texto, diccionario, etc. Recordar que cada módulo
-	debe implementarse independientemente e incluirse */
+	
 };
 
-//Estructura para el manejo de lineas de tipo lista doble enlazada
+//Estructura para el manejo de palabras; nodo de linea; lista simplemente enlazada
 struct nodo_linea{
 	Cadena palabra;
+	Linea sig, ant;
 	int tope;
-	Linea sig;
 };
-//Estructura para el manejo de lineas de tipo abb
+
+//Estructura para el manejo de diccionario encapsulado; 
+struct diccionario {
+	nodoD raiz;
+	int nPalabras;
+	
+
+};
+
+//Estructura de nodos de diccionario; ABB
 struct nodo_diccionario{
-	char* palabra;
-	Diccionario iz, de;
+	Cadena palabra;
+	nodoD iz, de;
+	int tope;
 };
 
 
 
-editor CrearEditor(){
-// Crea la estructura editor.
-	editor e = new(nodo_editor);
-	/* crear el resto de las estructuras que se incluyan en el editor
-	usando las funciones correspondientes de cada modulo */
+editor crearEditor(){
+
+	editor E = new(Editor);
+	
+	E->cabeza = NULL;
+	E->cola = NULL;
+	E->cant_Lineas = 0;
+	E->dC = crearDic();
+
+	return E;
+}
+
+nodoE crearNodoEditor(){
+
+	nodoE e = new(nodo_editor);
+
+	e->fin = NULL;
+	e->inicio = NULL;
+	e->n_palabras = 0;
+	e->sig = NULL;
+	
 	return e;
 }
+
+
+Linea crearLinea(){
+
+	Linea l = new(nodo_linea);
+
+	l->sig = NULL;
+	l->tope = -1;
+
+	return l;
+}
+
+Diccionario crearDic() {
+
+	Diccionario D = new(diccionario);
+
+	D->nPalabras = 0;
+	D->raiz = NULL;
+
+	return D;
+}
+
+nodoD crearDiccionario(){
+
+	nodoD d = new(nodo_diccionario);
+	
+	d->de = NULL;
+	d->iz = NULL;
+	d->tope = -1;
+
+	return d;
+}
+
 
 TipoRetorno InsertarLinea(editor & e){
 // Inserta una nueva línea vacía al final del texto.
 // Este requerimiento debe ser resuelto en O(1) peor caso.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	
+    nodoE nE = crearNodoEditor();
+	if (e->cant_Lineas > 0) {
+		e->cola->sig = nE;
+
+	}else{
+		e->cabeza = nE;
+
+	} 
+	e->cola = nE;
+	e->cant_Lineas++;
+
+	return OK;
 }
 
 TipoRetorno InsertarLineaEnPosicion(editor & e, Posicion posicionLinea){
 // Inserta una nueva línea vacía en la posición indicada.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	if(posicionLinea < 0 || posicionLinea > e->cant_Lineas){
+		return ERROR;
+	}else{
+		nodoE nuevo = crearNodoEditor();
+
+		if(e->cant_Lineas == 0){
+			// vacio
+			e->cabeza = nuevo;
+			e->cola = nuevo;
+		}else if(posicionLinea == 0){
+			// al inicio
+			nuevo->sig = e->cabeza;
+			e->cabeza = nuevo;
+		}else if(e->cant_Lineas == posicionLinea){
+			// al final
+			e->cola->sig = nuevo;
+			e->cola = nuevo;
+		}else{
+			// al medio
+			nodoE it = e->cabeza;
+			for(int i = 0; i < posicionLinea - 1; i++){
+				it = it->sig;
+			}
+			nuevo->sig = it->sig;
+			it->sig = nuevo;
+		}
+		
+		e->cant_Lineas++; 
+	}
+	return OK;
 }
 
 TipoRetorno BorrarLinea(editor & e, Posicion posicionLinea){
 // Borra la línea en la posición indicada.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	if(posicionLinea < 0 || posicionLinea >= e->cant_Lineas){
+		return ERROR;
+	}else{
+	if(e->cant_Lineas == 0){
+			// vacio
+			return ERROR;
+
+	}else if(posicionLinea == 0){
+		// al inicio
+		nodoE temp = e->cabeza;
+		if (e->cant_Lineas > 1) {
+			e->cabeza = e->cabeza->sig;
+		}else {
+			e->cabeza = NULL;
+			e->cola = NULL;
+		}	
+		delete temp;
+
+	}else if(e->cant_Lineas - 1 == posicionLinea){
+		// al final
+		nodoE temp = e->cola;
+
+		if (e->cant_Lineas > 1) {
+		nodoE it = e->cabeza;
+		for(int i = 0; i < posicionLinea - 1; i++){
+			it = it->sig;
+		}
+		e->cola = it;
+		e->cola->sig = NULL;
+	    }else{
+			e->cabeza = NULL;
+			e->cola = NULL;
+
+		}
+
+		delete temp;
+		
+	}else{
+		// al medio
+		nodoE it = e->cabeza;
+		for(int i = 0; i < posicionLinea - 1; i++){
+			it = it->sig;
+		}
+		nodoE temp = it->sig;
+		it->sig = temp->sig;
+		delete temp;
+	}
+	
+	e->cant_Lineas--;
+	}
+	return OK;
 }
 
 TipoRetorno BorrarTodo(editor & e){
 // Borra todas las líneas del texto.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+
+	auxBT (e->cabeza);
+	e->cant_Lineas = 0;
+	e->cabeza = NULL;
+	e->cola = NULL;
+
+	return OK;
 }
+
+void auxBT (nodoE iter) {
+	if (iter != NULL) {
+
+		auxBT(iter->sig);
+		auxBPT(iter->inicio);
+		delete iter;
+	} 
+
+}
+
+void auxBPT (Linea iter){
+	if (iter != NULL){
+
+		auxBPT(iter->sig);
+		delete[] iter->palabra;
+		delete iter;
+	}
+}
+
+TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra){
+// Borra la palabra en la posición indicada.
+// Ver más detalles en la letra del obligatorio.
+
+// recorre horizontalmente hasta llegar a una linea en concreta
+
+	if(posicionLinea < 0 || posicionLinea >= e->cant_Lineas){
+		return ERROR;
+	}else{
+
+    int i = 0;
+	nodoE iter = e->cabeza;
+
+	while (i != posicionLinea){
+
+		iter = iter->sig;
+		i++;
+
+	}
+
+	if(iter->n_palabras == 0) return ERROR;
+
+	auxBP(iter, posicionPalabra);
+
+
+
+	return OK;
+	}
+}
+
+void auxBP(nodoE linea, Posicion posicionPalabra) {
+// borra un nodo en una posición de la linea en concreto
+	int i = 0;
+	Linea iter = linea->inicio;
+	while (i != posicionPalabra){
+		iter = iter->sig;
+		i++;
+	}
+
+	// borro
+	if(linea->n_palabras == 1){
+		// si hay una palabra				
+		linea->inicio = NULL;
+		linea->fin = NULL;
+		linea->n_palabras--;
+	}else if(linea->n_palabras > 1 && iter->ant == linea->inicio){
+		// si hay mas de una palabra y la palabraAborrar es la del inicio
+		linea->inicio = iter->sig;
+		iter->sig->ant = iter->ant;
+		linea->n_palabras--;
+	}else if(linea->n_palabras > 1 && iter->ant == linea->fin){
+		// si hay mas de una palabra y la palabraAborrar es la del fin
+		linea->fin = iter->ant;
+		iter->ant->sig = iter->sig;
+		linea->n_palabras--;
+	}else{
+		// si hay mas de una palabra y es un nodo entre medio
+		iter->ant->sig = iter->sig;
+		iter->sig->ant = iter->ant;
+		linea->n_palabras--;
+	}
+	// **si no hay palabras simplemente borra iter
+	delete iter;
+}
+
 
 TipoRetorno BorrarOcurrenciasPalabraEnTexto(editor & e, Cadena palabraABorrar){
 // Borra todas las ocurrencias de una palabra en el texto.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	if(e != NULL){
+		auxBOP(e->cabeza, palabraABorrar);
+		return OK;
+	}else{
+		return ERROR;
+	}
 }
+
+void auxBOP(nodoE iter, Cadena palabraABorrar){
+	// recorre horizontalmente todas las lineas
+	if(iter){
+		if(iter->inicio){
+			borrarEnLinea(iter, palabraABorrar);
+			auxBOP(iter->sig, palabraABorrar);
+		}
+	}
+}
+
+void borrarEnLinea(nodoE linea, Cadena palabraABorrar){
+	// recorre verticalmente una linea y va borrando los nodos = palabraABorrar
+	Linea iter = linea->inicio;
+	while(iter){
+		if(strcmp(iter->palabra, palabraABorrar) == 0){
+			// borro
+			if(linea->n_palabras == 1){
+				// si hay una palabra				
+				linea->inicio = NULL;
+				linea->fin = NULL;
+				linea->n_palabras--;
+			}else if(linea->n_palabras > 1 && iter->ant == linea->inicio){
+				// si hay mas de una palabra y la palabraAborrar es la del inicio
+				linea->inicio = iter->sig;
+				iter->sig->ant = iter->ant;
+				linea->n_palabras--;
+			}else if(linea->n_palabras > 1 && iter->ant == linea->fin){
+				// si hay mas de una palabra y la palabraAborrar es la del fin
+				linea->fin = iter->ant;
+				iter->ant->sig = iter->sig;
+				linea->n_palabras--;
+			}else{
+				// si hay mas de una palabra y es un nodo entre medio
+				iter->ant->sig = iter->sig;
+				iter->sig->ant = iter->ant;
+				linea->n_palabras--;
+			}
+			// **si no hay palabras simplemente borra iter
+			delete iter;
+		}
+			
+	// avanzo
+	iter = iter->sig;
+	}
+}		
+
 
 TipoRetorno ImprimirTexto(editor & e){
 // Imprime el texto por pantalla.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	if(e){
+		auxIT(e, e->cabeza, 1);
+		return OK;
+	}else{
+		return ERROR;
+	}
+}
+
+// avanzo horizontalmente
+void auxIT(editor &e, nodoE iter, int indice){
+	printf("Salida:\n");
+
+	if(e->cabeza != NULL){
+		printf("%d: ", indice);
+		imprimirLinea(iter->inicio);
+		auxIT(e, iter->sig, indice + 1);
+		printf("\n");
+	}
+}
+// avanzo verticalmente
+void imprimirLinea(Linea linea){
+	if(linea != NULL){
+		printf("%s", linea->palabra);
+		printf(" ");
+		imprimirLinea(linea->sig);
+	}
 }
 
 TipoRetorno ComprimirTexto(editor & e){
@@ -99,11 +416,6 @@ TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicio
 	return NO_IMPLEMENTADA;
 }
 
-TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra){
-// Borra la palabra en la posición indicada.
-// Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
-}
 
 TipoRetorno BorrarOcurrenciasPalabraEnLinea(editor & e, Posicion posicionLinea, Cadena palabraABorrar){
 // Borra todas las ocurrencias de una palabra en la línea indicada.

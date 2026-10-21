@@ -13,8 +13,16 @@
 
 // Operaciones Relativas a las lineas (al documento)
 
-editor CrearEditor();
-// Crea la estructura editor.
+editor crearEditor();
+
+nodoE crearNodoEditor();
+
+Linea crearLinea();
+
+Diccionario crearDic();
+
+nodoD crearDiccionario();
+
 
 TipoRetorno InsertarLinea(editor & e);
 // Inserta una nueva línea vacía al final del texto.
@@ -32,6 +40,10 @@ TipoRetorno BorrarLinea(editor & e, Posicion posicionLinea);
 TipoRetorno BorrarTodo(editor & e);
 // Borra todas las líneas del texto.
 // Ver más detalles en la letra del obligatorio.
+
+void auxBT (nodoE iter);
+
+void auxBPT (Linea iter);
 
 TipoRetorno BorrarOcurrenciasPalabraEnTexto(editor & e, Cadena palabraABorrar);
 // Borra todas las ocurrencias de una palabra en el texto.
