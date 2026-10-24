@@ -30,7 +30,8 @@ struct nodo_editor{
 //Estructura para el manejo de palabras; nodo de linea; lista simplemente enlazada
 struct nodo_linea{
 	Cadena palabra;
-	Linea sig, ant;
+	Linea sig;
+	Linea ant;
 	int tope;
 };
 
@@ -244,7 +245,7 @@ void auxBPT (Linea iter){
 	if (iter != NULL){
 
 		auxBPT(iter->sig);
-		delete[] iter->palabra;
+		delete[] iter->Cadena;
 		delete iter;
 	}
 }
@@ -253,14 +254,12 @@ TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionP
 // Borra la palabra en la posición indicada.
 // Ver más detalles en la letra del obligatorio.
 
-// recorre horizontalmente hasta llegar a una linea en concreta
-
 	if(posicionLinea < 0 || posicionLinea >= e->cant_Lineas){
 		return ERROR;
 	}else{
 
     int i = 0;
-	nodoE iter = e->cabeza;
+	nodoE iter = e.cabeza;
 
 	while (i != posicionLinea){
 
@@ -269,9 +268,9 @@ TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionP
 
 	}
 
-	if(iter->n_palabras == 0) return ERROR;
+	if(iter.n_palabras == 0) return ERROR;
 
-	auxBP(iter, posicionPalabra);
+	auxBP(iter.inicio);
 
 
 
@@ -279,39 +278,35 @@ TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionP
 	}
 }
 
-void auxBP(nodoE linea, Posicion posicionPalabra) {
-// borra un nodo en una posición de la linea en concreto
+void auxBP(Linea iter, int posicionPalabra) {
+
 	int i = 0;
-	Linea iter = linea->inicio;
 	while (i != posicionPalabra){
 		iter = iter->sig;
 		i++;
 	}
 
-	// borro
-	if(linea->n_palabras == 1){
-		// si hay una palabra				
-		linea->inicio = NULL;
-		linea->fin = NULL;
-		linea->n_palabras--;
-	}else if(linea->n_palabras > 1 && iter->ant == linea->inicio){
-		// si hay mas de una palabra y la palabraAborrar es la del inicio
-		linea->inicio = iter->sig;
+	if (iter->n_palabras > 1){
+
+		if (iter->ant == NULL){
+			nodoE->cabeza = iter->sig;
+			nodoE->cabeza->ant = NULL;
+
+		}else if (iter.sig == NULL){
+			nodoE->cola = iter.ant;
+			nodoE->cola->sig = NULL;
+
+		}else {
 		iter->sig->ant = iter->ant;
-		linea->n_palabras--;
-	}else if(linea->n_palabras > 1 && iter->ant == linea->fin){
-		// si hay mas de una palabra y la palabraAborrar es la del fin
-		linea->fin = iter->ant;
 		iter->ant->sig = iter->sig;
-		linea->n_palabras--;
-	}else{
-		// si hay mas de una palabra y es un nodo entre medio
-		iter->ant->sig = iter->sig;
-		iter->sig->ant = iter->ant;
-		linea->n_palabras--;
+
+		}
+    }else {
+		nodoE->inicio = NULL;
+		nodoE->fin = NULL;
 	}
-	// **si no hay palabras simplemente borra iter
 	delete iter;
+	nodoE->n_palabras--;
 }
 
 
@@ -326,13 +321,22 @@ TipoRetorno BorrarOcurrenciasPalabraEnTexto(editor & e, Cadena palabraABorrar){
 	}
 }
 
-void auxBOP(nodoE iter, Cadena palabraABorrar){
-	// recorre horizontalmente todas las lineas
+void auxBOP(nodoE iter, int palabraABorrar, int indiceHorizontal){
 	if(iter){
 		if(iter->inicio){
-			borrarEnLinea(iter, palabraABorrar);
+			int indiceVertical = 0;
+			borrarEnLinea(inicio, palabraABorrar, indiceVertical);
 			auxBOP(iter->sig, palabraABorrar);
 		}
+	}
+}
+
+void borrarEnLinea(Linea iter, int palabraABorrar, int indiceVertical){
+	if(iter){
+		if(iter->palabra == palabraABorrar){
+			auxBP(iter, indiceVertical);
+		}
+		borrarEnLinea(inicio->sig, palabraABorrar, indiceVertical + 1);
 	}
 }
 
@@ -398,7 +402,7 @@ void auxIT(editor &e, nodoE iter, int indice){
 // avanzo verticalmente
 void imprimirLinea(Linea linea){
 	if(linea != NULL){
-		printf("%s", linea->palabra);
+		printf("%d", linea->palabra);
 		printf(" ");
 		imprimirLinea(linea->sig);
 	}
