@@ -224,10 +224,9 @@ TipoRetorno BorrarTodo(editor & e){
 // Ver más detalles en la letra del obligatorio.
 
 	auxBT (e->cabeza);
-
-	e.cant_Lineas = 0;
-	e.cabeza = NULL;
-	e.cola = NULL;
+	e->cant_Lineas = 0;
+	e->cabeza = NULL;
+	e->cola = NULL;
 
 	return OK;
 }
@@ -340,6 +339,43 @@ void borrarEnLinea(Linea iter, int palabraABorrar, int indiceVertical){
 		borrarEnLinea(inicio->sig, palabraABorrar, indiceVertical + 1);
 	}
 }
+
+void borrarEnLinea(nodoE linea, Cadena palabraABorrar){
+	// recorre verticalmente una linea y va borrando los nodos = palabraABorrar
+	Linea iter = linea->inicio;
+	while(iter){
+		if(strcmp(iter->palabra, palabraABorrar) == 0){
+			// borro
+			if(linea->n_palabras == 1){
+				// si hay una palabra				
+				linea->inicio = NULL;
+				linea->fin = NULL;
+				linea->n_palabras--;
+			}else if(linea->n_palabras > 1 && iter->ant == linea->inicio){
+				// si hay mas de una palabra y la palabraAborrar es la del inicio
+				linea->inicio = iter->sig;
+				iter->sig->ant = iter->ant;
+				linea->n_palabras--;
+			}else if(linea->n_palabras > 1 && iter->ant == linea->fin){
+				// si hay mas de una palabra y la palabraAborrar es la del fin
+				linea->fin = iter->ant;
+				iter->ant->sig = iter->sig;
+				linea->n_palabras--;
+			}else{
+				// si hay mas de una palabra y es un nodo entre medio
+				iter->ant->sig = iter->sig;
+				iter->sig->ant = iter->ant;
+				linea->n_palabras--;
+			}
+			// **si no hay palabras simplemente borra iter
+			delete iter;
+		}
+			
+	// avanzo
+	iter = iter->sig;
+	}
+}		
+
 
 TipoRetorno ImprimirTexto(editor & e){
 // Imprime el texto por pantalla.
