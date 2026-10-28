@@ -92,130 +92,73 @@ void borrar(texto t){
 void auxIT(editor & e, texto iter, int indice);
 
 TipoRetorno ImprimirTexto(editor & e) {
-    if (e) {
-        auxIT(e, getCabeza(e), 1);
-        return OK;
-    } else {
-        return ERROR;
-    }
+    if (e == NULL) return ERROR;
+
+    printf("Salida:\n");
+    auxIT(e, getCabeza(e), 1);
+    return OK;
 }
 
 void auxIT(editor & e, texto iter, int indice) {
-    printf("Salida:\n");
-
-    if (getCabeza(e) != NULL) {
+    if (iter != NULL) {
         printf("%d: ", indice);
         imprimirLinea(getInicio(iter));
-        auxIT(e, Tail(iter), indice + 1);
         printf("\n");
+        auxIT(e, Tail(iter), indice + 1);
     }
 }
 
 TipoRetorno ComprimirTexto(editor & e) {
-    int i = 0;
+    if (e == NULL) return ERROR;
+
     texto iter = getCabeza(e);
+    while (iter != NULL) {
+        int eliminadas = appendPalabras(iter, Tail(iter), getFin(iter), getInicio(Tail(iter)), 0);
+        setCantLineas(e, getCantLineas(e) - eliminadas);
 
-    while (i < getCantLineas(e) && Tail(iter) != NULL) {
-        setCantLineas(
-            e,
-            getCantLineas(e) - appendPalabras(
-                iter,
-                Tail(iter),
-                getFin(iter),
-                getInicio(Tail(iter)),
-                0
-            )
-        );
-
-        i++;
+        if (Tail(iter) == NULL) {
+            setCola(e, iter);
+            break;
+        }
         iter = Tail(iter);
     }
-
-    setCola(e, iter);
 
     return OK;
 }
 
 int appendPalabras(texto actLinea, texto sigLinea, linea iterL1, linea iterL2, int lElim) {
-    if (getNPalabras(actLinea) < MAX_CANT_PALABRAS_X_LINEA && iterL1 != NULL && iterL2 != NULL) {
-        SetTail(iterL1, iterL2);
+    while (sigLinea != NULL) {
+        if (getNPalabras(sigLinea) == 0) {
+            SetTail(actLinea, Tail(sigLinea));
+            borrar(sigLinea);
+            lElim++;
+            sigLinea = Tail(actLinea);
+            continue;
+        }
 
-        return appendPalabras(
-            actLinea,
-            sigLinea,
-            iterL2,
-            Tail(iterL2),
-            lElim
-        );
+        if (getNPalabras(actLinea) >= MAX_CANT_PALABRAS_X_LINEA) {
+            break;
+        }
 
-    } else if (getNPalabras(actLinea) < MAX_CANT_PALABRAS_X_LINEA && iterL2 == NULL) {
-        setFin(actLinea, iterL1);
-        setNPalabras(
-            actLinea,
-            getNPalabras(actLinea) + getNPalabras(sigLinea)
-        );
+        linea palabra = getInicio(sigLinea);
+        setInicio(sigLinea, Tail(palabra));
+        if (getInicio(sigLinea) == NULL) {
+            setFin(sigLinea, NULL);
+        }
 
-        SetTail(actLinea, Tail(sigLinea));
+        if (getFin(actLinea) == NULL) {
+            setInicio(actLinea, palabra);
+        } else {
+            SetTail(getFin(actLinea), palabra);
+        }
+        SetTail(palabra, NULL);
+        setFin(actLinea, palabra);
 
-        texto temp = sigLinea;
-        borrar(temp);
-
-        lElim++;
-        sigLinea = Tail(actLinea);
-
-        return appendPalabras(
-            actLinea,
-            Tail(sigLinea),
-            iterL1,
-            getInicio(sigLinea),
-            lElim
-        );
-
-    } else if (getNPalabras(actLinea) == MAX_CANT_PALABRAS_X_LINEA && iterL2 != NULL) {
-        setFin(actLinea, iterL1);
-
-        int palAgg = MAX_CANT_PALABRAS_X_LINEA - getNPalabras(actLinea);
-
-        setNPalabras(actLinea, MAX_CANT_PALABRAS_X_LINEA);
-        SetTail(iterL1, NULL);
-
-        setInicio(sigLinea, iterL2);
-        setNPalabras(sigLinea, palAgg);
-
-        return lElim;
-
-    } else if (getNPalabras(actLinea) == MAX_CANT_PALABRAS_X_LINEA && iterL2 == NULL) {
-        setFin(actLinea, iterL1);
-        setNPalabras(actLinea, MAX_CANT_PALABRAS_X_LINEA);
-
-        SetTail(actLinea, Tail(sigLinea));
-        SetTail(iterL1, NULL);
-
-        texto temp = sigLinea;
-        borrar(temp);
-
-        lElim++;
-
-        return lElim;
-
-    } else if (getNPalabras(actLinea) < MAX_CANT_PALABRAS_X_LINEA && iterL2 == NULL && getFin(Tail(sigLinea)) == NULL) {
-        setFin(actLinea, iterL1);
-
-        setNPalabras(
-            actLinea,
-            getNPalabras(actLinea) + getNPalabras(sigLinea)
-        );
-
-        SetTail(actLinea, NULL);
-        SetTail(iterL1, NULL);
-
-        texto temp = sigLinea;
-        borrar(temp);
-
-        lElim++;
-
-        return lElim;
+        setNPalabras(actLinea, getNPalabras(actLinea) + 1);
+        setNPalabras(sigLinea, getNPalabras(sigLinea) - 1);
     }
+
+    return lElim;
 }
 
 

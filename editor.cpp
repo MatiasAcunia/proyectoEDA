@@ -79,6 +79,7 @@ TipoRetorno InsertarLinea(editor & e){
 }
 
 TipoRetorno BorrarTodo(editor & e) {
+    if (e == NULL) return ERROR;
     auxBT(getCabeza(e));
     setCantLineas(e, 0);
     setCabeza(e, NULL);

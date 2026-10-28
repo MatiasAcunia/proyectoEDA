@@ -145,162 +145,89 @@ nodoD auxIPD(nodoD iter, Diccionario dic, Cadena palabraAIngresar);
 nodoD auxBPD(nodoD iter, Diccionario dic, Cadena palabraABorrar);
 
 TipoRetorno IngresarPalabraDiccionario(editor & e, Cadena palabraAIngresar) {
-    if (getdC(e) == NULL) {
-        Diccionario dic = crearDic();
+    if (e == NULL || palabraAIngresar == NULL) return ERROR;
+
+    Diccionario dic = getdC(e);
+    if (dic == NULL) {
+        dic = crearDic();
         setdC(e, dic);
     }
 
-    Diccionario dic = getdC(e);
+    int anteriores = getnPalabras(dic);
+    setRaiz(dic, auxIPD(getRaiz(dic), dic, palabraAIngresar));
 
-    setRaiz(
-        dic,
-        auxIPD(getRaiz(dic), dic, palabraAIngresar)
-    );
-
-    setnPalabras(dic, getnPalabras(dic) + 1);
-
-    return OK;
+    return getnPalabras(dic) > anteriores ? OK : ERROR;
 }
 
 nodoD auxIPD(nodoD iter, Diccionario dic, Cadena palabraAIngresar) {
-    if (getRaiz(dic) != NULL) {
-        Cadena palabra = getPalabra(iter);
-        int res = compararCadena(palabraAIngresar, palabra);
-        delete[] palabra;
-
-        if (res < 0) {
-            setSubiz(
-                iter,
-                auxIPD(subiz(iter), dic, palabraAIngresar)
-            );
-
-            return iter;
-
-        } else if (res > 0) {
-            setSubde(
-                iter,
-                auxIPD(subde(iter), dic, palabraAIngresar)
-            );
-
-            return iter;
-
-        } else if (res == 0) {
-            return NULL;
-
-        } else if (iter == NULL) {
-            nodoD nuevo = crearDiccionario();
-
-            reservarCadena(nuevo, strlen(palabraAIngresar) + 1);
-            copiarCadena(nuevo, palabraAIngresar);
-
-            setSubiz(nuevo, NULL);
-            setSubde(nuevo, NULL);
-
-            return nuevo;
-        }
-
-    } else if (getRaiz(dic) == NULL) {
+    if (iter == NULL) {
         nodoD nuevo = crearDiccionario();
-
         reservarCadena(nuevo, strlen(palabraAIngresar) + 1);
         copiarCadena(nuevo, palabraAIngresar);
-
-        setSubiz(nuevo, NULL);
-        setSubde(nuevo, NULL);
-
+        setnPalabras(dic, getnPalabras(dic) + 1);
         return nuevo;
     }
+
+    Cadena palabra = getPalabra(iter);
+    int res = compararCadena(palabraAIngresar, palabra);
+    delete[] palabra;
+
+    if (res < 0) {
+        setSubiz(iter, auxIPD(subiz(iter), dic, palabraAIngresar));
+    } else if (res > 0) {
+        setSubde(iter, auxIPD(subde(iter), dic, palabraAIngresar));
+    }
+
+    return iter;
 }
 
 TipoRetorno BorrarPalabraDiccionario(editor & e, Cadena palabraABorrar) {
-    if (getdC(e) == NULL || getRaiz(getdC(e)) == NULL) {
+    if (e == NULL || palabraABorrar == NULL || getdC(e) == NULL ||
+        getRaiz(getdC(e)) == NULL) {
         return ERROR;
     }
 
     Diccionario dic = getdC(e);
+    int anteriores = getnPalabras(dic);
+    setRaiz(dic, auxBPD(getRaiz(dic), dic, palabraABorrar));
 
-    setRaiz(
-        dic,
-        auxIPD(getRaiz(dic), dic, palabraABorrar)
-    );
-
-    setnPalabras(dic, getnPalabras(dic) - 1);
-
-    return OK;
+    return getnPalabras(dic) < anteriores ? OK : ERROR;
 }
 
 nodoD auxBPD(nodoD iter, Diccionario dic, Cadena palabraABorrar) {
-    if (iter != NULL) {
-        Cadena palabra = getPalabra(iter);
-        int res = compararCadena(palabraABorrar, palabra);
-        delete[] palabra;
+    if (iter == NULL) return NULL;
 
-        if (res < 0) {
-            setSubiz(
-                iter,
-                auxIPD(subiz(iter), dic, palabraABorrar)
-            );
+    Cadena palabra = getPalabra(iter);
+    int res = compararCadena(palabraABorrar, palabra);
+    delete[] palabra;
 
-            return iter;
-
-        } else if (res > 0) {
-            setSubde(
-                iter,
-                auxIPD(subde(iter), dic, palabraABorrar)
-            );
-
-            return iter;
-
-        } else if (res == 0) {
-            if (subiz(iter) != NULL && subde(iter) != NULL) {
-                nodoD iter2 = subde(iter);
-
-                while (subiz(iter2) != NULL) {
-                    iter2 = subiz(iter2);
-                }
-
-                Cadena palabra2 = getPalabra(iter2);
-
-                copiarCadena(iter, palabra2);
-
-                setSubde(
-                    iter,
-                    auxBPD(subde(iter), dic, palabra2)
-                );
-
-                delete[] palabra2;
-
-                return iter;
-
-            } else if (subiz(iter) != NULL && subde(iter) == NULL) {
-                nodoD temp = iter;
-                iter = subiz(iter);
-
-                borrarPalabra(temp);
-                borrarNodoD(temp);
-
-                return iter;
-
-            } else if (subde(iter) != NULL && subiz(iter) == NULL) {
-                nodoD temp = iter;
-                iter = subde(iter);
-
-                borrarPalabra(temp);
-                borrarNodoD(temp);
-
-                return iter;
-
-            } else {
-                borrarPalabra(iter);
-                borrarNodoD(iter);
-
-                return NULL;
+    if (res < 0) {
+        setSubiz(iter, auxBPD(subiz(iter), dic, palabraABorrar));
+    } else if (res > 0) {
+        setSubde(iter, auxBPD(subde(iter), dic, palabraABorrar));
+    } else {
+        if (subiz(iter) != NULL && subde(iter) != NULL) {
+            nodoD iter2 = subde(iter);
+            while (subiz(iter2) != NULL) {
+                iter2 = subiz(iter2);
             }
 
-        } else if (iter == NULL) {
-            return NULL;
+            Cadena palabra2 = getPalabra(iter2);
+            borrarPalabra(iter);
+            reservarCadena(iter, strlen(palabra2) + 1);
+            copiarCadena(iter, palabra2);
+            setSubde(iter, auxBPD(subde(iter), dic, palabra2));
+            delete[] palabra2;
+        } else {
+            nodoD hijo = subiz(iter) != NULL ? subiz(iter) : subde(iter);
+            borrarPalabra(iter);
+            borrarNodoD(iter);
+            setnPalabras(dic, getnPalabras(dic) - 1);
+            return hijo;
         }
     }
+
+    return iter;
 }
 
 

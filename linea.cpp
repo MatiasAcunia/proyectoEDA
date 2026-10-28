@@ -121,169 +121,117 @@ void auxBOP(texto iter, Cadena palabraABorrar);
 void borrarEnLinea(texto txt, Cadena palabraABorrar);
 
 TipoRetorno InsertarLineaEnPosicion(editor & e, Posicion posicionLinea) {
-    if (posicionLinea < 0 || posicionLinea > getCantLineas(e)) {
+    if (e == NULL || posicionLinea == 0 || posicionLinea > getCantLineas(e) + 1) {
         return ERROR;
-    } else {
-        texto nuevo = crearTexto();
-
-        if (getCantLineas(e) == 0) {
-            setCabeza(e, nuevo);
-            setCola(e, nuevo);
-
-        } else if (posicionLinea == 0) {
-            SetTail(nuevo, getCabeza(e));
-            setCabeza(e, nuevo);
-
-        } else if (getCantLineas(e) == posicionLinea) {
-            SetTail(getCola(e), nuevo);
-            setCola(e, nuevo);
-
-        } else {
-            texto it = getCabeza(e);
-
-            for (int i = 0; i < posicionLinea - 1; i++) {
-                it = Tail(it);
-            }
-
-            SetTail(nuevo, Tail(it));
-            SetTail(it, nuevo);
-        }
-
-        setCantLineas(e, getCantLineas(e) + 1);
     }
 
+    texto nuevo = crearTexto();
+
+    if (getCantLineas(e) == 0) {
+        setCabeza(e, nuevo);
+        setCola(e, nuevo);
+    } else if (posicionLinea == 1) {
+        SetTail(nuevo, getCabeza(e));
+        setCabeza(e, nuevo);
+    } else if (posicionLinea == getCantLineas(e) + 1) {
+        SetTail(getCola(e), nuevo);
+        setCola(e, nuevo);
+    } else {
+        texto it = getCabeza(e);
+        for (Posicion i = 1; i < posicionLinea - 1; i++) {
+            it = Tail(it);
+        }
+        SetTail(nuevo, Tail(it));
+        SetTail(it, nuevo);
+    }
+
+    setCantLineas(e, getCantLineas(e) + 1);
     return OK;
 }
 
 TipoRetorno BorrarLinea(editor & e, Posicion posicionLinea) {
-    if (posicionLinea < 0 || posicionLinea >= getCantLineas(e)) {
+    if (e == NULL || posicionLinea == 0 || posicionLinea > getCantLineas(e)) {
         return ERROR;
-    } else {
-        if (getCantLineas(e) == 0) {
-            return ERROR;
-
-        } else if (posicionLinea == 0) {
-            texto temp = getCabeza(e);
-
-            if (getCantLineas(e) > 1) {
-                setCabeza(e, Tail(getCabeza(e)));
-            } else {
-                setCabeza(e, NULL);
-                setCola(e, NULL);
-            }
-
-            borrar(temp);
-
-        } else if (getCantLineas(e) - 1 == posicionLinea) {
-            texto temp = getCola(e);
-
-            if (getCantLineas(e) > 1) {
-                texto it = getCabeza(e);
-
-                for (int i = 0; i < posicionLinea - 1; i++) {
-                    it = Tail(it);
-                }
-
-                setCola(e, it);
-                SetTail(getCola(e), NULL);
-
-            } else {
-                setCabeza(e, NULL);
-                setCola(e, NULL);
-            }
-
-            borrar(temp);
-
-        } else {
-            texto it = getCabeza(e);
-
-            for (int i = 0; i < posicionLinea - 1; i++) {
-                it = Tail(it);
-            }
-
-            texto temp = Tail(it);
-            SetTail(it, Tail(temp));
-            borrar(temp);
-        }
-
-        setCantLineas(e, getCantLineas(e) - 1);
     }
 
+    texto temp;
+    if (posicionLinea == 1) {
+        temp = getCabeza(e);
+        setCabeza(e, Tail(temp));
+        if (getCantLineas(e) == 1) {
+            setCola(e, NULL);
+        }
+    } else {
+        texto it = getCabeza(e);
+        for (Posicion i = 1; i < posicionLinea - 1; i++) {
+            it = Tail(it);
+        }
+        temp = Tail(it);
+        SetTail(it, Tail(temp));
+        if (posicionLinea == getCantLineas(e)) {
+            setCola(e, it);
+        }
+    }
+
+    auxBPL(getInicio(temp));
+    borrar(temp);
+    setCantLineas(e, getCantLineas(e) - 1);
     return OK;
 }
 
 TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra) {
-    if (posicionLinea < 0 || posicionLinea >= getCantLineas(e)) {
+    if (e == NULL || posicionLinea == 0 || posicionLinea > getCantLineas(e)) {
         return ERROR;
-    } else {
-        int i = 0;
-        texto iter = getCabeza(e);
-
-        while (i != posicionLinea) {
-            iter = Tail(iter);
-            i++;
-        }
-
-        if (getNPalabras(iter) == 0) {
-            return ERROR;
-        }
-
-        auxBP(iter, posicionPalabra);
-
-        return OK;
     }
+
+    texto iter = getCabeza(e);
+    for (Posicion i = 1; i < posicionLinea; i++) {
+        iter = Tail(iter);
+    }
+
+    if (posicionPalabra == 0 || posicionPalabra > getNPalabras(iter)) {
+        return ERROR;
+    }
+
+    auxBP(iter, posicionPalabra);
+    return OK;
 }
 
 void auxBP(texto txt, Posicion posicionPalabra) {
-    int i = 0;
     linea iter = getInicio(txt);
     linea prev = NULL;
-
-    while (i != posicionPalabra) {
+    for (Posicion i = 1; i < posicionPalabra; i++) {
         prev = iter;
         iter = Tail(iter);
-        i++;
     }
 
-    if (getNPalabras(txt) == 1) {
-        setInicio(txt, NULL);
-        setFin(txt, NULL);
-        setNPalabras(txt, getNPalabras(txt) - 1);
-
-    } else if (getNPalabras(txt) > 1 && prev == NULL) {
+    if (prev == NULL) {
         setInicio(txt, Tail(iter));
-        setNPalabras(txt, getNPalabras(txt) - 1);
-
-    } else if (getNPalabras(txt) > 1 && Tail(iter) == NULL) {
-        setFin(txt, prev);
-        SetTail(prev, Tail(iter));
-        setNPalabras(txt, getNPalabras(txt) - 1);
-
     } else {
         SetTail(prev, Tail(iter));
-        setNPalabras(txt, getNPalabras(txt) - 1);
+    }
+    if (getFin(txt) == iter) {
+        setFin(txt, prev);
     }
 
+    setNPalabras(txt, getNPalabras(txt) - 1);
+    borrarPalabra(iter);
     borrarLinea(iter);
 }
 
 TipoRetorno BorrarOcurrenciasPalabraEnTexto(editor & e, Cadena palabraABorrar) {
-    editor a = e;
-
-    if (a != NULL) {
-        auxBOP(getCabeza(e), palabraABorrar);
-        return OK;
-    } else {
+    if (e == NULL || palabraABorrar == NULL) {
         return ERROR;
     }
+
+    auxBOP(getCabeza(e), palabraABorrar);
+    return OK;
 }
 
 void auxBOP(texto iter, Cadena palabraABorrar) {
-    if (iter) {
-        if (getInicio(iter)) {
-            borrarEnLinea(iter, palabraABorrar);
-            auxBOP(Tail(iter), palabraABorrar);
-        }
+    if (iter != NULL) {
+        borrarEnLinea(iter, palabraABorrar);
+        auxBOP(Tail(iter), palabraABorrar);
     }
 }
 
@@ -318,6 +266,7 @@ void borrarEnLinea(texto txt, Cadena palabraABorrar) {
                 setNPalabras(txt, getNPalabras(txt) - 1);
             }
 
+            borrarPalabra(iter);
             borrarLinea(iter);
 
         } else {
@@ -329,139 +278,74 @@ void borrarEnLinea(texto txt, Cadena palabraABorrar) {
 }
 
 TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra, Cadena palabraAIngresar) {
-    int iposicionLinea = static_cast<int>(posicionLinea);
-    int iposicionPalabra = static_cast<int>(posicionPalabra);
-
-    if (iposicionLinea < 0 || iposicionLinea >= getCantLineas(e)) {
+    if (e == NULL || palabraAIngresar == NULL || posicionLinea == 0 || posicionLinea > getCantLineas(e)) {
         return ERROR;
     }
 
-    int i = 0;
     texto iter = getCabeza(e);
-
-    while (i < iposicionLinea) {
-        i++;
+    for (Posicion i = 1; i < posicionLinea; i++) {
         iter = Tail(iter);
     }
 
-    if (iposicionPalabra < 0 || iposicionPalabra > getNPalabras(iter)) {
+    if (posicionPalabra == 0 || posicionPalabra > getNPalabras(iter) + 1 ||
+        getNPalabras(iter) >= MAX_CANT_PALABRAS_X_LINEA) {
         return ERROR;
-    }
-
-    i = 0;
-    linea iterP = getInicio(iter);
-    linea prev = NULL;
-
-    while (i < iposicionPalabra) {
-        i++;
-        prev = iterP;
-        iterP = Tail(iterP);
     }
 
     linea nuevo = crearLinea();
     reservarCadena(nuevo, strlen(palabraAIngresar) + 1);
     copiarCadena(nuevo, palabraAIngresar);
 
-    if (iposicionPalabra == getNPalabras(iter)) {
-        SetTail(getFin(iter), nuevo);
-        SetTail(nuevo, NULL);
+    if (getNPalabras(iter) == 0) {
+        setInicio(iter, nuevo);
         setFin(iter, nuevo);
-
-    } else if (iposicionPalabra == 0) {
+    } else if (posicionPalabra == 1) {
         SetTail(nuevo, getInicio(iter));
         setInicio(iter, nuevo);
-
+    } else if (posicionPalabra == getNPalabras(iter) + 1) {
+        SetTail(getFin(iter), nuevo);
+        setFin(iter, nuevo);
     } else {
-        SetTail(nuevo, getInicio(iter));
+        linea prev = getInicio(iter);
+        for (Posicion i = 1; i < posicionPalabra - 1; i++) {
+            prev = Tail(prev);
+        }
+        SetTail(nuevo, Tail(prev));
         SetTail(prev, nuevo);
     }
 
     setNPalabras(iter, getNPalabras(iter) + 1);
-
     return OK;
 }
 
 TipoRetorno BorrarOcurrenciasPalabraEnLinea(editor & e, Posicion posicionLinea, Cadena palabraABorrar) {
-    int iposicionLinea = static_cast<int>(posicionLinea);
-
-    if (iposicionLinea < 0 || iposicionLinea >= getCantLineas(e)) {
+    if (e == NULL || palabraABorrar == NULL || posicionLinea == 0 || posicionLinea > getCantLineas(e)) {
         return ERROR;
     }
 
-    int i = 0;
     texto iter = getCabeza(e);
-
-    while (i < iposicionLinea) {
-        i++;
+    for (Posicion i = 1; i < posicionLinea; i++) {
         iter = Tail(iter);
     }
 
-    linea iterP = getInicio(iter);
-    linea prev = NULL;
-    i = 0;
-
-    while (iterP != NULL) {
-        Cadena palabra = getPalabra(iterP);
-        int res = compararCadena(palabra, palabraABorrar);
-        delete[] palabra;
-
-        if (res == 0) {
-            if (i == getNPalabras(iter)) {
-                SetTail(prev, NULL);
-
-                linea temp = iterP;
-                iterP = Tail(iterP);
-                borrarLinea(temp);
-
-                setFin(iter, prev);
-
-            } else if (i == 0) {
-                setInicio(iter, Tail(iterP));
-
-                linea temp = iterP;
-                iterP = Tail(iterP);
-                borrarLinea(temp);
-
-            } else {
-                SetTail(prev, Tail(iterP));
-
-                linea temp = iterP;
-                iterP = Tail(iterP);
-                borrarLinea(temp);
-            }
-
-        } else {
-            prev = iterP;
-            iterP = Tail(iterP);
-        }
-
-        i++;
-    }
-
+    borrarEnLinea(iter, palabraABorrar);
     return OK;
 }
 
 TipoRetorno ImprimirLinea(editor & e, Posicion posicionLinea) {
-    int iposicionLinea = static_cast<int>(posicionLinea);
-
-    if (iposicionLinea < 0 || iposicionLinea >= getCantLineas(e)) {
+    if (e == NULL || posicionLinea == 0 || posicionLinea > getCantLineas(e)) {
         return ERROR;
     }
 
-    int i = 0;
     texto iter = getCabeza(e);
-
-    while (i < iposicionLinea) {
-        i++;
+    for (Posicion i = 1; i < posicionLinea; i++) {
         iter = Tail(iter);
     }
 
-    linea iterP = getInicio(iter);
-
     printf("Salida:\n");
-    printf("%d: ", i + 1);
-    imprimirLinea(iterP);
-
+    printf("%u: ", posicionLinea);
+    imprimirLinea(getInicio(iter));
+    printf("\n");
     return OK;
 }
 
