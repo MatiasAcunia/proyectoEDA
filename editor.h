@@ -60,7 +60,9 @@ TipoRetorno BorrarTodo(editor & e);
 
 void auxBT (texto iter);
 
-void auxBPT (linea iter);
+void auxBPL(linea iter);
+void imprimirLinea(linea iter);
+int appendPalabras(texto actLinea, texto sigLinea, linea iterL1, linea iterL2, int lElim);
 
 TipoRetorno BorrarOcurrenciasPalabraEnTexto(editor & e, Cadena palabraABorrar);
 // Borra todas las ocurrencias de una palabra en el texto.

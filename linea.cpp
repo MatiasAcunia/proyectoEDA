@@ -65,6 +65,12 @@ int compararCadena(Cadena palabra, Cadena palabra2){
 linea Tail(linea l){
 	return l->sig;
 }
+
+void SetTail(linea l, linea sig) {
+    if (l != NULL) {
+        l->sig = sig;
+    }
+}
 linea Snoc(linea l){
 	linea temp = crearLinea();
 	temp->sig = l;
@@ -104,413 +110,323 @@ TipoRetorno TADInsertarLinea(editor & e){
 	return OK;
 }
 
-TipoRetorno InsertarLineaEnPosicion(editor & e, Posicion posicionLinea){
-// Inserta una nueva línea vacía en la posición indicada.
-// Ver más detalles en la letra del obligatorio.
-	if(posicionLinea < 0 || posicionLinea > e->cant_Lineas){
-		return ERROR;
-	}else{
-		texto nuevo = crearNodoEditor();
+void auxBP(texto txt, Posicion posicionPalabra);
+void auxBOP(texto iter, Cadena palabraABorrar);
+void borrarEnLinea(texto txt, Cadena palabraABorrar);
 
-		if(e->cant_Lineas == 0){
-			// vacio
-			e->cabeza = nuevo;
-			e->cola = nuevo;
-		}else if(posicionLinea == 0){
-			// al inicio
-			nuevo->sig = e->cabeza;
-			e->cabeza = nuevo;
-		}else if(e->cant_Lineas == posicionLinea){
-			// al final
-			e->cola->sig = nuevo;
-			e->cola = nuevo;
-		}else{
-			// al medio
-			texto it = e->cabeza;
-			for(int i = 0; i < posicionLinea - 1; i++){
-				it = it->sig;
-			}
-			nuevo->sig = it->sig;
-			it->sig = nuevo;
-		}
-		
-		e->cant_Lineas++; 
-	}
-	return OK;
+TipoRetorno InsertarLineaEnPosicion(editor & e, Posicion posicionLinea) {
+    if (posicionLinea < 0 || posicionLinea > getCantLineas(e)) {
+        return ERROR;
+    } else {
+        texto nuevo = crearTexto();
+
+        if (getCantLineas(e) == 0) {
+            setCabeza(e, nuevo);
+            setCola(e, nuevo);
+
+        } else if (posicionLinea == 0) {
+            SetTail(nuevo, getCabeza(e));
+            setCabeza(e, nuevo);
+
+        } else if (getCantLineas(e) == posicionLinea) {
+            SetTail(getCola(e), nuevo);
+            setCola(e, nuevo);
+
+        } else {
+            texto it = getCabeza(e);
+
+            for (int i = 0; i < posicionLinea - 1; i++) {
+                it = Tail(it);
+            }
+
+            SetTail(nuevo, Tail(it));
+            SetTail(it, nuevo);
+        }
+
+        setCantLineas(e, getCantLineas(e) + 1);
+    }
+
+    return OK;
 }
 
-TipoRetorno BorrarLinea(editor & e, Posicion posicionLinea){
-// Borra la línea en la posición indicada.
-// Ver más detalles en la letra del obligatorio.
-	if(posicionLinea < 0 || posicionLinea >= e->cant_Lineas){
-		return ERROR;
-	}else{
-	if(e->cant_Lineas == 0){
-			// vacio
-			return ERROR;
+TipoRetorno BorrarLinea(editor & e, Posicion posicionLinea) {
+    if (posicionLinea < 0 || posicionLinea >= getCantLineas(e)) {
+        return ERROR;
+    } else {
+        if (getCantLineas(e) == 0) {
+            return ERROR;
 
-	}else if(posicionLinea == 0){
-		// al inicio
-		texto temp = e->cabeza;
-		if (e->cant_Lineas > 1) {
-			e->cabeza = e->cabeza->sig;
-		}else {
-			e->cabeza = NULL;
-			e->cola = NULL;
-		}	
-		delete temp;
+        } else if (posicionLinea == 0) {
+            texto temp = getCabeza(e);
 
-	}else if(e->cant_Lineas - 1 == posicionLinea){
-		// al final
-		texto temp = e->cola;
+            if (getCantLineas(e) > 1) {
+                setCabeza(e, Tail(getCabeza(e)));
+            } else {
+                setCabeza(e, NULL);
+                setCola(e, NULL);
+            }
 
-		if (e->cant_Lineas > 1) {
-		texto it = e->cabeza;
-		for(int i = 0; i < posicionLinea - 1; i++){
-			it = it->sig;
-		}
-		e->cola = it;
-		e->cola->sig = NULL;
-	    }else{
-			e->cabeza = NULL;
-			e->cola = NULL;
+            borrar(temp);
 
-		}
+        } else if (getCantLineas(e) - 1 == posicionLinea) {
+            texto temp = getCola(e);
 
-		delete temp;
-		
-	}else{
-		// al medio
-		texto it = e->cabeza;
-		for(int i = 0; i < posicionLinea - 1; i++){
-			it = it->sig;
-		}
-		texto temp = it->sig;
-		it->sig = temp->sig;
-		delete temp;
-	}
-	
-	e->cant_Lineas--;
-	}
-	return OK;
+            if (getCantLineas(e) > 1) {
+                texto it = getCabeza(e);
+
+                for (int i = 0; i < posicionLinea - 1; i++) {
+                    it = Tail(it);
+                }
+
+                setCola(e, it);
+                SetTail(getCola(e), NULL);
+
+            } else {
+                setCabeza(e, NULL);
+                setCola(e, NULL);
+            }
+
+            borrar(temp);
+
+        } else {
+            texto it = getCabeza(e);
+
+            for (int i = 0; i < posicionLinea - 1; i++) {
+                it = Tail(it);
+            }
+
+            texto temp = Tail(it);
+            SetTail(it, Tail(temp));
+            borrar(temp);
+        }
+
+        setCantLineas(e, getCantLineas(e) - 1);
+    }
+
+    return OK;
 }
 
+TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra) {
+    if (posicionLinea < 0 || posicionLinea >= getCantLineas(e)) {
+        return ERROR;
+    } else {
+        int i = 0;
+        texto iter = getCabeza(e);
 
+        while (i != posicionLinea) {
+            iter = Tail(iter);
+            i++;
+        }
 
-//			**FUNCIONES DE PALABRA**
+        if (getNPalabras(iter) == 0) {
+            return ERROR;
+        }
 
-void auxBPL (linea iter){
-	if (iter != NULL){
+        auxBP(iter, posicionPalabra);
 
-		auxBPL(iter->sig);
-		delete[] iter->palabra;
-		delete iter;
-	}
-}
-
-TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra){
-// Borra la palabra en la posición indicada.
-// Ver más detalles en la letra del obligatorio.
-
-// recorre horizontalmente hasta llegar a una linea en concreta
-
-	if(posicionLinea < 0 || posicionLinea >= e->cant_Lineas){
-		return ERROR;
-	}else{
-
-    int i = 0;
-	texto iter = e->cabeza;
-
-	while (i != posicionLinea){
-
-		iter = iter->sig;
-		i++;
-
-	}
-
-	if(iter->n_palabras == 0) return ERROR;
-
-	auxBP(iter, posicionPalabra);
-
-
-
-	return OK;
-	}
+        return OK;
+    }
 }
 
 void auxBP(texto txt, Posicion posicionPalabra) {
-// borra un nodo en una posición de la linea en concreto
-	int i = 0;
-	linea iter = txt->inicio;
-	while (i != posicionPalabra){
-		iter = iter->sig;
-		i++;
-	}
+    int i = 0;
+    linea iter = getInicio(txt);
+    linea prev = NULL;
 
-	// borro
-	if(txt->n_palabras == 1){
-		// si hay una palabra				
-		txt->inicio = NULL;
-		txt->fin = NULL;
-		txt->n_palabras--;
-	}else if(txt->n_palabras > 1 && iter->ant == txt->inicio){
-		// si hay mas de una palabra y la palabraAborrar es la del inicio
-		txt->inicio = iter->sig;
-		iter->sig->ant = iter->ant;
-		txt->n_palabras--;
-	}else if(txt->n_palabras > 1 && iter->ant == txt->fin){
-		// si hay mas de una palabra y la palabraAborrar es la del fin
-		txt->fin = iter->ant;
-		iter->ant->sig = iter->sig;
-		txt->n_palabras--;
-	}else{
-		// si hay mas de una palabra y es un nodo entre medio
-		iter->ant->sig = iter->sig;
-		iter->sig->ant = iter->ant;
-		txt->n_palabras--;
-	}
-	// **si no hay palabras simplemente borra iter
-	delete iter;
+    while (i != posicionPalabra) {
+        prev = iter;
+        iter = Tail(iter);
+        i++;
+    }
+
+    if (getNPalabras(txt) == 1) {
+        setInicio(txt, NULL);
+        setFin(txt, NULL);
+        setNPalabras(txt, getNPalabras(txt) - 1);
+
+    } else if (getNPalabras(txt) > 1 && prev == NULL) {
+        setInicio(txt, Tail(iter));
+        setNPalabras(txt, getNPalabras(txt) - 1);
+
+    } else if (getNPalabras(txt) > 1 && Tail(iter) == NULL) {
+        setFin(txt, prev);
+        SetTail(prev, Tail(iter));
+        setNPalabras(txt, getNPalabras(txt) - 1);
+
+    } else {
+        SetTail(prev, Tail(iter));
+        setNPalabras(txt, getNPalabras(txt) - 1);
+    }
+
+    borrarLinea(iter);
 }
 
+TipoRetorno BorrarOcurrenciasPalabraEnTexto(editor & e, Cadena palabraABorrar) {
+    editor a = e;
 
-TipoRetorno BorrarOcurrenciasPalabraEnTexto(editor & e, Cadena palabraABorrar){
-// Borra todas las ocurrencias de una palabra en el texto.
-// Ver más detalles en la letra del obligatorio.
-	editor a = e;
-	
-	if(a != NULL){
-		auxBOP(e->cabeza, palabraABorrar);
-		return OK;
-	}else{
-		return ERROR;
-	}
+    if (a != NULL) {
+        auxBOP(getCabeza(e), palabraABorrar);
+        return OK;
+    } else {
+        return ERROR;
+    }
 }
 
-void auxBOP(texto iter, Cadena palabraABorrar){
-	// recorre horizontalmente todas las lineas
-	if(iter){
-		if(iter->inicio){
-			borrarEnLinea(iter, palabraABorrar);
-			auxBOP(iter->sig, palabraABorrar);
-		}
-	}
+void auxBOP(texto iter, Cadena palabraABorrar) {
+    if (iter) {
+        if (getInicio(iter)) {
+            borrarEnLinea(iter, palabraABorrar);
+            auxBOP(Tail(iter), palabraABorrar);
+        }
+    }
 }
 
-void borrarEnLinea(texto linea, Cadena palabraABorrar){
-	// recorre verticalmente una linea y va borrando los nodos = palabraABorrar
-	linea iter = linea->inicio;
-	while(iter){
-		if(strcmp(iter->palabra, palabraABorrar) == 0){
-			// borro
-			if(linea->n_palabras == 1){
-				// si hay una palabra				
-				linea->inicio = NULL;
-				linea->fin = NULL;
-				linea->n_palabras--;
-			}else if(linea->n_palabras > 1 && iter->ant == linea->inicio){
-				// si hay mas de una palabra y la palabraAborrar es la del inicio
-				linea->inicio = iter->sig;
-				iter->sig->ant = iter->ant;
-				linea->n_palabras--;
-			}else if(linea->n_palabras > 1 && iter->ant == linea->fin){
-				// si hay mas de una palabra y la palabraAborrar es la del fin
-				linea->fin = iter->ant;
-				iter->ant->sig = iter->sig;
-				linea->n_palabras--;
-			}else{
-				// si hay mas de una palabra y es un nodo entre medio
-				iter->ant->sig = iter->sig;
-				iter->sig->ant = iter->ant;
-				linea->n_palabras--;
-			}
-			// **si no hay palabras simplemente borra iter
-			delete iter;
-		}
-			
-	// avanzo
-	iter = iter->sig;
-	}
-}		
+void borrarEnLinea(texto txt, Cadena palabraABorrar) {
+    linea iter = getInicio(txt);
+    linea prev = NULL;
 
-// avanzo verticalmente
-void imprimirLinea(linea linea){
-	if(linea != NULL){
-		printf("%s", linea->palabra);
-		printf(" ");
-		imprimirLinea(linea->sig);
-	}
-}
+    while (iter) {
+        linea siguiente = Tail(iter);
 
+        Cadena palabra = getPalabra(iter);
+        int res = compararCadena(palabra, palabraABorrar);
+        delete[] palabra;
 
+        if (res == 0) {
+            if (getNPalabras(txt) == 1) {
+                setInicio(txt, NULL);
+                setFin(txt, NULL);
+                setNPalabras(txt, getNPalabras(txt) - 1);
 
-int appendPalabras(texto actLinea, texto sigLinea, linea iterL1, linea iterL2, int lElim) {
-    if (actLinea->n_palabras < MAX_CANT_PALABRAS_X_LINEA && iterL1 != NULL && iterL2 != NULL) {
-        iterL1->sig = iterL2;
-        return appendPalabras(actLinea, sigLinea, iterL2, iterL2->sig, lElim);
+            } else if (getNPalabras(txt) > 1 && prev == NULL) {
+                setInicio(txt, siguiente);
+                setNPalabras(txt, getNPalabras(txt) - 1);
 
-    } else if (actLinea->n_palabras < MAX_CANT_PALABRAS_X_LINEA && iterL2 == NULL) {
-        actLinea->fin = iterL1;
-        actLinea->n_palabras = actLinea->n_palabras + sigLinea->n_palabras;
-        actLinea->sig = sigLinea->sig;
+            } else if (getNPalabras(txt) > 1 && siguiente == NULL) {
+                setFin(txt, prev);
+                SetTail(prev, siguiente);
+                setNPalabras(txt, getNPalabras(txt) - 1);
 
-        texto temp = sigLinea;
-        delete temp;
+            } else {
+                SetTail(prev, siguiente);
+                setNPalabras(txt, getNPalabras(txt) - 1);
+            }
 
-        lElim++;
-        sigLinea = actLinea->sig;
+            borrarLinea(iter);
 
-        return appendPalabras(actLinea, sigLinea->sig, iterL1, sigLinea->inicio, lElim);
+        } else {
+            prev = iter;
+        }
 
-    } else if (actLinea->n_palabras == MAX_CANT_PALABRAS_X_LINEA && iterL2 != NULL) {
-        actLinea->fin = iterL1;
-        int palAgg = MAX_CANT_PALABRAS_X_LINEA - actLinea->n_palabras;
-        actLinea->n_palabras = MAX_CANT_PALABRAS_X_LINEA;
-        iterL1->sig = NULL;
-
-        sigLinea->inicio = iterL2;
-        sigLinea->n_palabras = palAgg;
-        return lElim;
-
-    } else if (actLinea->n_palabras == MAX_CANT_PALABRAS_X_LINEA && iterL2 == NULL) {
-        actLinea->fin = iterL1;
-        actLinea->n_palabras = MAX_CANT_PALABRAS_X_LINEA;
-        actLinea->sig = sigLinea->sig;
-        iterL1->sig = NULL;
-
-        texto temp = sigLinea;
-        delete temp;
-
-        lElim++;
-        return lElim;
-
-    } else if (actLinea->n_palabras < MAX_CANT_PALABRAS_X_LINEA && iterL2 == NULL && sigLinea->sig->fin == NULL) {
-        actLinea->fin = iterL1;
-        actLinea->n_palabras = actLinea->n_palabras + sigLinea->n_palabras;
-        actLinea->sig = NULL;
-        iterL1->sig = NULL;
-
-        texto temp = sigLinea;
-        delete temp;
-
-        lElim++;
-        return lElim;
+        iter = siguiente;
     }
 }
 
 TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra, Cadena palabraAIngresar) {
-    // Inserta una palabra en una línea.
-    // Ver más detalles en la letra del obligatorio.
-
     int iposicionLinea = static_cast<int>(posicionLinea);
     int iposicionPalabra = static_cast<int>(posicionPalabra);
 
-    if (iposicionLinea < 0 || iposicionLinea >= e->cant_Lineas) {
+    if (iposicionLinea < 0 || iposicionLinea >= getCantLineas(e)) {
         return ERROR;
     }
 
     int i = 0;
-    texto iter = e->cabeza;
+    texto iter = getCabeza(e);
 
     while (i < iposicionLinea) {
         i++;
-        iter = iter->sig;
+        iter = Tail(iter);
     }
 
-    if (iposicionPalabra < 0 || iposicionPalabra > iter->n_palabras) {
+    if (iposicionPalabra < 0 || iposicionPalabra > getNPalabras(iter)) {
         return ERROR;
     }
 
     i = 0;
-    linea iterP = iter->inicio;
+    linea iterP = getInicio(iter);
     linea prev = NULL;
 
     while (i < iposicionPalabra) {
         i++;
         prev = iterP;
-        iterP = iterP->sig;
+        iterP = Tail(iterP);
     }
 
     linea nuevo = crearLinea();
-    nuevo->palabra = new char[strlen(palabraAIngresar) + 1];
-    strcpy(nuevo->palabra, palabraAIngresar);
-    nuevo->tope = strlen(palabraAIngresar) + 1;
+    reservarCadena(nuevo, strlen(palabraAIngresar) + 1);
+    copiarCadena(nuevo, palabraAIngresar);
 
-    if (iposicionPalabra == iter->n_palabras) {
-        iter->fin->sig = nuevo;
-        nuevo->sig = NULL;
-        nuevo->ant = iter->fin;
-        iter->fin = nuevo;
+    if (iposicionPalabra == getNPalabras(iter)) {
+        SetTail(getFin(iter), nuevo);
+        SetTail(nuevo, NULL);
+        setFin(iter, nuevo);
 
     } else if (iposicionPalabra == 0) {
-        nuevo->ant = NULL;
-        nuevo->sig = iter->inicio;
-        iter->inicio->ant = nuevo;
-        iter->inicio = nuevo;
+        SetTail(nuevo, getInicio(iter));
+        setInicio(iter, nuevo);
 
     } else {
-        nuevo->sig = iter->inicio;
-        nuevo->ant = prev;
-        prev->sig = nuevo;
-        iterP->ant = nuevo;
+        SetTail(nuevo, getInicio(iter));
+        SetTail(prev, nuevo);
     }
 
-    iter->n_palabras++;
+    setNPalabras(iter, getNPalabras(iter) + 1);
 
     return OK;
 }
 
 TipoRetorno BorrarOcurrenciasPalabraEnLinea(editor & e, Posicion posicionLinea, Cadena palabraABorrar) {
-    // Borra todas las ocurrencias de una palabra en la línea indicada.
-    // Ver más detalles en la letra del obligatorio.
-
     int iposicionLinea = static_cast<int>(posicionLinea);
-    
 
-    if (iposicionLinea < 0 || iposicionLinea >= e->cant_Lineas) {
+    if (iposicionLinea < 0 || iposicionLinea >= getCantLineas(e)) {
         return ERROR;
     }
 
     int i = 0;
-    texto iter = e->cabeza;
+    texto iter = getCabeza(e);
 
     while (i < iposicionLinea) {
         i++;
-        iter = iter->sig;
+        iter = Tail(iter);
     }
 
-   
-
-    linea iterP = iter->inicio;
+    linea iterP = getInicio(iter);
     linea prev = NULL;
     i = 0;
 
     while (iterP != NULL) {
-        if (strcmp(iterP->palabra, palabraABorrar) == 0) {
-            if (i == iter->n_palabras) {
-                prev->sig = NULL;
+        Cadena palabra = getPalabra(iterP);
+        int res = compararCadena(palabra, palabraABorrar);
+        delete[] palabra;
+
+        if (res == 0) {
+            if (i == getNPalabras(iter)) {
+                SetTail(prev, NULL);
+
                 linea temp = iterP;
-                iterP = iterP->sig;
-                delete temp;
-                iter->fin = prev;
+                iterP = Tail(iterP);
+                borrarLinea(temp);
+
+                setFin(iter, prev);
 
             } else if (i == 0) {
-                iterP->sig->ant = NULL;
-                iter->inicio = iterP->sig;
+                setInicio(iter, Tail(iterP));
+
                 linea temp = iterP;
-                iterP = iterP->sig;
-                delete temp;
+                iterP = Tail(iterP);
+                borrarLinea(temp);
 
             } else {
-                prev->sig = iterP->sig;
-                iterP->sig->ant = prev;
+                SetTail(prev, Tail(iterP));
+
                 linea temp = iterP;
-                iterP = iterP->sig;
-                delete temp;
+                iterP = Tail(iterP);
+                borrarLinea(temp);
             }
 
         } else {
-            iterP = iterP->sig;
+            prev = iterP;
+            iterP = Tail(iterP);
         }
 
         i++;
@@ -519,28 +435,22 @@ TipoRetorno BorrarOcurrenciasPalabraEnLinea(editor & e, Posicion posicionLinea, 
     return OK;
 }
 
-
-
 TipoRetorno ImprimirLinea(editor & e, Posicion posicionLinea) {
-    // Imprime la línea por pantalla.
-    // Ver más detalles en la letra del obligatorio.
-
     int iposicionLinea = static_cast<int>(posicionLinea);
 
-    if (iposicionLinea < 0 || iposicionLinea >= e->cant_Lineas) {
+    if (iposicionLinea < 0 || iposicionLinea >= getCantLineas(e)) {
         return ERROR;
     }
 
     int i = 0;
-    texto iter = e->cabeza;
+    texto iter = getCabeza(e);
 
     while (i < iposicionLinea) {
         i++;
-        iter = iter->sig;
+        iter = Tail(iter);
     }
 
-
-    linea iterP = iter->inicio;
+    linea iterP = getInicio(iter);
 
     printf("Salida:\n");
     printf("%d: ", i + 1);
@@ -549,6 +459,15 @@ TipoRetorno ImprimirLinea(editor & e, Posicion posicionLinea) {
     return OK;
 }
 
+void imprimirLinea(linea l) {
+    if (l != NULL) {
+        Cadena palabra = getPalabra(l);
 
+        printf("%s", palabra);
+        printf(" ");
 
+        delete[] palabra;
 
+        imprimirLinea(Tail(l));
+    }
+}

@@ -85,44 +85,133 @@ void borrar(texto t){
 }
 
 
-TipoRetorno ImprimirTexto(editor & e){
-// Imprime el texto por pantalla.
-// Ver más detalles en la letra del obligatorio.
-	if(e){
-		auxIT(e, e->cabeza, 1);
-		return OK;
-	}else{
-		return ERROR;
-	}
+void auxIT(editor & e, texto iter, int indice);
+
+TipoRetorno ImprimirTexto(editor & e) {
+    if (e) {
+        auxIT(e, getCabeza(e), 1);
+        return OK;
+    } else {
+        return ERROR;
+    }
 }
 
-// avanzo horizontalmente
-void auxIT(editor &e, texto iter, int indice){
-	printf("Salida:\n");
+void auxIT(editor & e, texto iter, int indice) {
+    printf("Salida:\n");
 
-	if(e->cabeza != NULL){
-		printf("%d: ", indice);
-		imprimirLinea(iter->inicio);
-		auxIT(e, iter->sig, indice + 1);
-		printf("\n");
-	}
+    if (getCabeza(e) != NULL) {
+        printf("%d: ", indice);
+        imprimirLinea(getInicio(iter));
+        auxIT(e, Tail(iter), indice + 1);
+        printf("\n");
+    }
 }
 
 TipoRetorno ComprimirTexto(editor & e) {
-    // Comprime las palabras del texto. Para implementar esta operación no debe generarse un nuevo documento.
-    // Ver más detalles en la letra del obligatorio.
-
     int i = 0;
-    texto iter = e->cabeza;
+    texto iter = getCabeza(e);
 
-    while (i < e->cant_Lineas && iter->sig != NULL) {
-        e->cant_Lineas = e->cant_Lineas - appendPalabras(iter, iter->sig, iter->fin, iter->sig->inicio, 0);
+    while (i < getCantLineas(e) && Tail(iter) != NULL) {
+        setCantLineas(
+            e,
+            getCantLineas(e) - appendPalabras(
+                iter,
+                Tail(iter),
+                getFin(iter),
+                getInicio(Tail(iter)),
+                0
+            )
+        );
+
         i++;
-        iter = iter->sig;
+        iter = Tail(iter);
     }
 
-    e->cola = iter;
+    setCola(e, iter);
+
     return OK;
+}
+
+int appendPalabras(texto actLinea, texto sigLinea, linea iterL1, linea iterL2, int lElim) {
+    if (getNPalabras(actLinea) < MAX_CANT_PALABRAS_X_LINEA && iterL1 != NULL && iterL2 != NULL) {
+        SetTail(iterL1, iterL2);
+
+        return appendPalabras(
+            actLinea,
+            sigLinea,
+            iterL2,
+            Tail(iterL2),
+            lElim
+        );
+
+    } else if (getNPalabras(actLinea) < MAX_CANT_PALABRAS_X_LINEA && iterL2 == NULL) {
+        setFin(actLinea, iterL1);
+        setNPalabras(
+            actLinea,
+            getNPalabras(actLinea) + getNPalabras(sigLinea)
+        );
+
+        SetTail(actLinea, Tail(sigLinea));
+
+        texto temp = sigLinea;
+        borrar(temp);
+
+        lElim++;
+        sigLinea = Tail(actLinea);
+
+        return appendPalabras(
+            actLinea,
+            Tail(sigLinea),
+            iterL1,
+            getInicio(sigLinea),
+            lElim
+        );
+
+    } else if (getNPalabras(actLinea) == MAX_CANT_PALABRAS_X_LINEA && iterL2 != NULL) {
+        setFin(actLinea, iterL1);
+
+        int palAgg = MAX_CANT_PALABRAS_X_LINEA - getNPalabras(actLinea);
+
+        setNPalabras(actLinea, MAX_CANT_PALABRAS_X_LINEA);
+        SetTail(iterL1, NULL);
+
+        setInicio(sigLinea, iterL2);
+        setNPalabras(sigLinea, palAgg);
+
+        return lElim;
+
+    } else if (getNPalabras(actLinea) == MAX_CANT_PALABRAS_X_LINEA && iterL2 == NULL) {
+        setFin(actLinea, iterL1);
+        setNPalabras(actLinea, MAX_CANT_PALABRAS_X_LINEA);
+
+        SetTail(actLinea, Tail(sigLinea));
+        SetTail(iterL1, NULL);
+
+        texto temp = sigLinea;
+        borrar(temp);
+
+        lElim++;
+
+        return lElim;
+
+    } else if (getNPalabras(actLinea) < MAX_CANT_PALABRAS_X_LINEA && iterL2 == NULL && getFin(Tail(sigLinea)) == NULL) {
+        setFin(actLinea, iterL1);
+
+        setNPalabras(
+            actLinea,
+            getNPalabras(actLinea) + getNPalabras(sigLinea)
+        );
+
+        SetTail(actLinea, NULL);
+        SetTail(iterL1, NULL);
+
+        texto temp = sigLinea;
+        borrar(temp);
+
+        lElim++;
+
+        return lElim;
+    }
 }
 
 

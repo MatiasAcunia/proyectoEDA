@@ -14,13 +14,15 @@ Diccionario crearDic();
 nodoD getRaiz(Diccionario d);
 int getnPalabras(Diccionario d);
 void setnPalabras(Diccionario d, int n);
-void setRaiz(Diccionario d);
+void setRaiz(Diccionario d, nodoD raiz);
 void borrarDic(Diccionario d);
 bool isEmptyDic(Diccionario d);
 
 nodoD crearDiccionario();
 nodoD subiz(nodoD d);
 nodoD subde(nodoD d);
+void setSubiz(nodoD d, nodoD iz);
+void setSubde(nodoD d, nodoD de);
 bool isEmptyNodoD(nodoD d);
 void borrarNodoD(nodoD d);
 

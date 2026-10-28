@@ -19,6 +19,7 @@ int lengthCadena(linea l);
 int compararCadena(Cadena palabra, Cadena palabra2);
 
 linea Tail(linea l);
+void SetTail(linea l, linea sig);
 linea Snoc(linea l);
 linea Cons(linea l);
 bool isEmpty(linea l);
