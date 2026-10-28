@@ -27,7 +27,7 @@ bool isEmptyNodoD(nodoD d);
 void borrarNodoD(nodoD d);
 
 void reservarCadena(nodoD d, int length);
-Cadena copiarCadena(nodoD d, Cadena palabra);
+void copiarCadena(nodoD d, Cadena palabra);
 char* getPalabra(nodoD d);
 void borrarPalabra(nodoD d);
 int lengthCadena(nodoD d);

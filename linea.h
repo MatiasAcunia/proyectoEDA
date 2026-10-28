@@ -12,7 +12,7 @@ typedef struct nodo_linea * linea;
 
 linea crearLinea();
 void reservarCadena(linea l, int length);
-Cadena copiarCadena(linea l, Cadena palabra);
+void copiarCadena(linea l, Cadena palabra);
 char* getPalabra(linea l);
 void borrarPalabra(linea l);
 int lengthCadena(linea l);

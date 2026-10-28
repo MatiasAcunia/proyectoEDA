@@ -38,22 +38,24 @@ Diccionario crearDic() {
 }
 
 nodoD getRaiz(Diccionario d){
-    if((d != NULL) && (d->raiz != NULL)){
-        return d->raiz; 
-    } 
+    if(d != NULL){
+        return d->raiz;
+    }
+    return NULL; 
 }
 int getnPalabras(Diccionario d){
-    if((d != NULL) && (d->nPalabras != NULL)){
-        return d->nPalabras; 
-    } 
+    if(d != NULL){
+        return d->nPalabras;
+    }
+    return 0; 
 }
 void setnPalabras(Diccionario d, int n){
-    if((d != NULL) && (d->nPalabras != NULL)){
+    if(d != NULL){
         d->nPalabras = n;
     } 
 }
 void setRaiz(Diccionario d, nodoD raiz){
-    if((d != NULL) && (d->raiz != NULL)){
+    if(d != NULL){
         d->raiz = raiz;
     } 
 }
@@ -63,7 +65,7 @@ void borrarDic(Diccionario d){
     } 
 }
 bool isEmptyDic(Diccionario d){
-    return (d);
+    return (d == NULL);
 }
 
 
@@ -74,14 +76,17 @@ nodoD crearDiccionario(){
 	nodoD d = new(nodo_diccionario);
 	d->de = NULL;
 	d->iz = NULL;
+	d->palabra = NULL;
 	return d;
 }
 
 nodoD subiz(nodoD d){
     if(d != NULL) return d->iz;
+    return NULL;
 }
 nodoD subde(nodoD d){
     if(d != NULL) return d->de;
+    return NULL;
 }
 void setSubiz(nodoD d, nodoD iz) {
     if (d != NULL) {
@@ -96,19 +101,19 @@ void setSubde(nodoD d, nodoD de) {
 }
 
 bool isEmptyNodoD(nodoD d){
-    return (d);
+    return (d == NULL);
 }
 void borrarNodoD(nodoD d){
     delete d;
 }
 
 void reservarCadena(nodoD d, int length){
-	if((d != NULL) && (strlen(d->palabra) != 0)){
+	if((d != NULL) && (length > 0)){
 		d->palabra = new char[length];
 	}
 	
 }
-Cadena copiarCadena(nodoD d, Cadena palabra){
+void copiarCadena(nodoD d, Cadena palabra){
 	if((d != NULL) && (d->palabra != NULL) && (palabra != NULL)){
 		strcpy(d->palabra, palabra);
 	} 
@@ -120,21 +125,19 @@ char* getPalabra(nodoD d){
 		strcpy(palabra, d->palabra);
 		return palabra;
 	}
+	return NULL;
 }
 void borrarPalabra(nodoD d){
 	if((d != NULL) && (d->palabra != NULL)){
 		delete[] d->palabra;
+		d->palabra = NULL;
 	}
 }
-int lenghtCadena(nodoD d){
+int lengthCadena(nodoD d){
 	if((d != NULL) && (d->palabra != NULL)){
 		return strlen(d->palabra);
 	}
-}
-int compararCadena(Cadena palabra, Cadena palabra2){
-	if((palabra != NULL) && (palabra2 != NULL)){
-		return strcmp(palabra, palabra2);
-	}
+	return 0;
 }
 
 

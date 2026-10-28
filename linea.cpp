@@ -23,17 +23,18 @@ struct nodo_linea{
 linea crearLinea(){
 	linea l = new(nodo_linea);
 	l->sig = NULL;
+	l->palabra = NULL;
 	return l;
 }
 
 
 void reservarCadena(linea l, int length){
-	if((l != NULL) && (strlen(l->palabra) != 0)){
+	if((l != NULL) && (length > 0)){
 		l->palabra = new char[length];
 	}
 	
 }
-Cadena copiarCadena(linea l, Cadena palabra){
+void copiarCadena(linea l, Cadena palabra){
 	if((l != NULL) && (l->palabra != NULL) && (palabra != NULL)){
 		strcpy(l->palabra, palabra);
 	} 
@@ -45,25 +46,30 @@ char* getPalabra(linea l){
 		strcpy(palabra, l->palabra);
 		return palabra;
 	}
+	return NULL;
 }
 void borrarPalabra(linea l){
 	if((l != NULL) && (l->palabra != NULL)){
 		delete[] l->palabra;
+		l->palabra = NULL;
 	}
 }
-int lenghtCadena(linea l){
+int lengthCadena(linea l){
 	if((l != NULL) && (l->palabra != NULL)){
 		return strlen(l->palabra);
 	}
+	return 0;
 }
 int compararCadena(Cadena palabra, Cadena palabra2){
 	if((palabra != NULL) && (palabra2 != NULL)){
 		return strcmp(palabra, palabra2);
 	}
+	return 0;
 }
 
 linea Tail(linea l){
-	return l->sig;
+	if(l != NULL) return l->sig;
+	return NULL;
 }
 
 void SetTail(linea l, linea sig) {
@@ -84,7 +90,7 @@ linea Cons(linea l){
 	
 }
 bool isEmpty(linea l){
-	return (l);
+	return (l == NULL);
 }
 void borrarLinea(linea l){
 	if(l != NULL) delete l;

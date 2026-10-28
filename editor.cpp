@@ -33,25 +33,29 @@ editor crearEditor(){
 
 texto getCabeza(editor e){
 	if(e != NULL) return e->cabeza;
+	return NULL;
 }
 texto getCola(editor e){
 	if(e != NULL) return e->cola;
+	return NULL;
 }
 int getCantLineas(editor e){
 	if(e != NULL) return e->cant_Lineas;
+	return 0;
 }
 Diccionario getdC(editor e){
 	if(e != NULL) return e->dC;
+	return NULL;
 }
 
 
 void setCabeza(editor e, texto cabeza){
-	if((e != NULL) && (cabeza != NULL)){
+	if(e != NULL){
 		e->cabeza = cabeza;
 	}
 }
 void setCola(editor e, texto cola){
-	if((e != NULL) && (cola != NULL)){
+	if(e != NULL){
 		e->cola = cola;
 	}
 }

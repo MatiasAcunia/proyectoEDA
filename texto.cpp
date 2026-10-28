@@ -34,18 +34,22 @@ texto crearTexto(){
 
 int getNPalabras(texto t){
 	if(t != NULL) return t->n_palabras;
+	return 0;
 }
 
 texto Tail(texto t){
 	if(t != NULL) return t->sig;
+	return NULL;
 }
 
 linea getInicio(texto t){
 	if(t != NULL) return t->inicio;
+	return NULL;
 }
 
 linea getFin(texto t){
 	if(t != NULL) return t->fin;
+	return NULL;
 }
 
 void setNPalabras(texto t, int n_palabras){
