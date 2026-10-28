@@ -22,7 +22,6 @@ struct nodo_texto{
 
 // get set atributos, borrado, head, tail, snoc, cons, isEmpty 
 texto crearTexto(){
-	
 	texto t = new(nodo_texto);
 	
 	t->fin = NULL;
@@ -33,3 +32,102 @@ texto crearTexto(){
 	return t;
 }
 
+int getNPalabras(texto t){
+	if(t != NULL) return t->n_palabras;
+}
+
+texto Tail(texto t){
+	if(t != NULL) return t->sig;
+}
+
+linea getInicio(texto t){
+	if(t != NULL) return t->inicio;
+}
+
+linea getFin(texto t){
+	if(t != NULL) return t->fin;
+}
+
+void setNPalabras(texto t, int n_palabras){
+	if(t != NULL) t->n_palabras = n_palabras;
+}
+void SetTail(texto t, texto sig){
+	if(t != NULL) t->sig = sig;
+}
+
+void setInicio(texto t, linea inicio){
+	if(t != NULL) t->inicio = inicio;
+}
+
+void setFin(texto t, linea fin){
+	if(t != NULL) t->fin = fin;
+}
+
+texto cons(texto t){
+	texto temp = crearTexto();
+	temp->sig = t;
+	return temp;
+}
+
+texto snoc(texto t){
+
+texto temp = crearTexto();
+	if(t != NULL) t->sig = temp;
+	return temp;
+}
+
+bool isEmpty(texto t){
+	return (t == NULL);
+}
+
+void borrar(texto t){
+	if(t != NULL) delete t;
+}
+
+
+TipoRetorno ImprimirTexto(editor & e){
+// Imprime el texto por pantalla.
+// Ver más detalles en la letra del obligatorio.
+	if(e){
+		auxIT(e, e->cabeza, 1);
+		return OK;
+	}else{
+		return ERROR;
+	}
+}
+
+// avanzo horizontalmente
+void auxIT(editor &e, texto iter, int indice){
+	printf("Salida:\n");
+
+	if(e->cabeza != NULL){
+		printf("%d: ", indice);
+		imprimirLinea(iter->inicio);
+		auxIT(e, iter->sig, indice + 1);
+		printf("\n");
+	}
+}
+
+TipoRetorno ComprimirTexto(editor & e) {
+    // Comprime las palabras del texto. Para implementar esta operación no debe generarse un nuevo documento.
+    // Ver más detalles en la letra del obligatorio.
+
+    int i = 0;
+    texto iter = e->cabeza;
+
+    while (i < e->cant_Lineas && iter->sig != NULL) {
+        e->cant_Lineas = e->cant_Lineas - appendPalabras(iter, iter->sig, iter->fin, iter->sig->inicio, 0);
+        i++;
+        iter = iter->sig;
+    }
+
+    e->cola = iter;
+    return OK;
+}
+
+
+TipoRetorno ImprimirTextoIncorrecto(editor & e){
+// Muestra las palabras del texto que no se encuentran en el diccionario.
+// Ver más detalles en la letra del obligatorio.
+	return NO_IMPLEMENTADA;
+}

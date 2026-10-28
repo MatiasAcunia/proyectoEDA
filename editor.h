@@ -8,20 +8,37 @@
 // Modulo de especificacion de editor.
 
 #include "definiciones.h"
+#include "texto.h"
+#include "diccionario.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+
+
+
+
 
 // Operaciones Relativas a las lineas (al documento)
 
 editor crearEditor();
 
-texto crearNodoEditor();
+texto getCabeza(editor e);
 
-linea crearLinea();
+texto getCola(editor e);
 
-Diccionario crearDic();
+int getCantLineas(editor e);
 
-nodoD crearDiccionario();
+Diccionario getdC(editor e);
+
+void setCabeza(editor e, texto cabeza);
+
+void setCola(editor e, texto cola);
+
+void setCantLineas(editor e, int cant_Lineas);
+
+void setdC(editor e, Diccionario dC);
+
+void borrarEditor(editor e);
 
 
 TipoRetorno InsertarLinea(editor & e);
