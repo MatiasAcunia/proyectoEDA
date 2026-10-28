@@ -13,11 +13,11 @@ enum _retorno{
 
 typedef enum _retorno TipoRetorno;
 
-typedef struct Editor * editor;
+typedef struct nodo_editor * editor;
 
-typedef struct nodo_editor * nodoE;
+typedef struct nodo_texto * texto;
 
-typedef struct nodo_linea * Linea;
+typedef struct nodo_linea * linea;
 
 typedef struct diccionario * Diccionario;
 
@@ -29,9 +29,7 @@ typedef char* Cadena;
 
 
 #define MAX_COMANDO 75
-#define MAX_CANT_PALABRAS_X_LINEA 3
+#define MAX_CANT_PALABRAS_X_LINEA 10
 #define MAX_CANT_ULTIMAS_PALABRAS 3
 
 #endif
-
-typedef char* Cadena;

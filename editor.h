@@ -1,5 +1,5 @@
-#ifndef editor_H
-#define editor_H
+#ifndef EDITOR_H
+#define EDITOR_H
 
 // Estructuras de Datos y Algoritmos - Obligatorio 2026
 // Tecnologo en Informatica FIng - DGETP - UTEC
@@ -15,9 +15,9 @@
 
 editor crearEditor();
 
-nodoE crearNodoEditor();
+texto crearNodoEditor();
 
-Linea crearLinea();
+linea crearLinea();
 
 Diccionario crearDic();
 
@@ -41,9 +41,9 @@ TipoRetorno BorrarTodo(editor & e);
 // Borra todas las líneas del texto.
 // Ver más detalles en la letra del obligatorio.
 
-void auxBT (nodoE iter);
+void auxBT (texto iter);
 
-void auxBPT (Lista iter);
+void auxBPT (linea iter);
 
 TipoRetorno BorrarOcurrenciasPalabraEnTexto(editor & e, Cadena palabraABorrar);
 // Borra todas las ocurrencias de una palabra en el texto.
