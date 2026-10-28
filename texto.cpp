@@ -55,7 +55,7 @@ linea getFin(texto t){
 void setNPalabras(texto t, int n_palabras){
 	if(t != NULL) t->n_palabras = n_palabras;
 }
-void SetTail(texto t, texto sig){
+void setTail(texto t, texto sig){
 	if(t != NULL) t->sig = sig;
 }
 
@@ -129,7 +129,7 @@ TipoRetorno ComprimirTexto(editor & e) {
 int appendPalabras(texto actLinea, texto sigLinea, linea iterL1, linea iterL2, int lElim) {
     while (sigLinea != NULL) {
         if (getNPalabras(sigLinea) == 0) {
-            SetTail(actLinea, Tail(sigLinea));
+            setTail(actLinea, Tail(sigLinea));
             borrar(sigLinea);
             lElim++;
             sigLinea = Tail(actLinea);
@@ -167,3 +167,4 @@ TipoRetorno ImprimirTextoIncorrecto(editor & e){
 // Ver más detalles en la letra del obligatorio.
 	return NO_IMPLEMENTADA;
 }
+

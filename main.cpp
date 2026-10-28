@@ -40,7 +40,7 @@ int main(){
 	bool ejecutado = false;
 	char * pch, * pch1, * pch2;
 	
-	editor e = CrearEditor();
+	editor e = crearEditor();
 
 	bool salir = false;
 

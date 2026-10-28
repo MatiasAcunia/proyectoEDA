@@ -27,7 +27,7 @@ linea getFin(texto t);
 
 void setNPalabras(texto t, int n_palabras);
 
-void SetTail(texto t, texto sig);
+void setTail(texto t, texto sig);
 
 void setInicio(texto t, linea inicio);
 

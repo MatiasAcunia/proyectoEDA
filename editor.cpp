@@ -75,7 +75,17 @@ TipoRetorno InsertarLinea(editor & e){
 // Inserta una nueva línea vacía al final del texto.
 // Este requerimiento debe ser resuelto en O(1) peor caso.
 // Ver más detalles en la letra del obligatorio.
-	TADInsertarLinea(e);
+	texto t = crearTexto();
+
+    if (getCantLineas(e) > 0) {
+		setTail(getCola(e), t);
+	}else{
+		setCabeza(e, t);
+
+	} 
+	setCola(e, t);
+	setCantLineas(e, getCantLineas(e) + 1);
+	return OK;
 }
 
 TipoRetorno BorrarTodo(editor & e) {

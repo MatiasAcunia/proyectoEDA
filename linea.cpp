@@ -4,6 +4,7 @@
 // editor.c
 // Modulo de implementacion de editor.
 
+#include "linea.h"
 #include "editor.h"
 // Incluir los modulos realizados.
 #include <string.h>
@@ -97,25 +98,6 @@ void borrarLinea(linea l){
 }
 
 
-TipoRetorno TADInsertarLinea(editor & e){
-// Inserta una nueva línea vacía al final del texto.
-// Este requerimiento debe ser resuelto en O(1) peor caso.
-// Ver más detalles en la letra del obligatorio.
-	
-    texto nE = crearNodoEditor();
-	if (e->cant_Lineas > 0) {
-		e->cola->sig = nE;
-
-	}else{
-		e->cabeza = nE;
-
-	} 
-	e->cola = nE;
-	e->cant_Lineas++;
-
-	return OK;
-}
-
 void auxBP(texto txt, Posicion posicionPalabra);
 void auxBOP(texto iter, Cadena palabraABorrar);
 void borrarEnLinea(texto txt, Cadena palabraABorrar);
@@ -131,18 +113,18 @@ TipoRetorno InsertarLineaEnPosicion(editor & e, Posicion posicionLinea) {
         setCabeza(e, nuevo);
         setCola(e, nuevo);
     } else if (posicionLinea == 1) {
-        SetTail(nuevo, getCabeza(e));
+        setTail(nuevo, getCabeza(e));
         setCabeza(e, nuevo);
     } else if (posicionLinea == getCantLineas(e) + 1) {
-        SetTail(getCola(e), nuevo);
+        setTail(getCola(e), nuevo);
         setCola(e, nuevo);
     } else {
         texto it = getCabeza(e);
         for (Posicion i = 1; i < posicionLinea - 1; i++) {
             it = Tail(it);
         }
-        SetTail(nuevo, Tail(it));
-        SetTail(it, nuevo);
+        setTail(nuevo, Tail(it));
+        setTail(it, nuevo);
     }
 
     setCantLineas(e, getCantLineas(e) + 1);
@@ -167,7 +149,7 @@ TipoRetorno BorrarLinea(editor & e, Posicion posicionLinea) {
             it = Tail(it);
         }
         temp = Tail(it);
-        SetTail(it, Tail(temp));
+        setTail(it, Tail(temp));
         if (posicionLinea == getCantLineas(e)) {
             setCola(e, it);
         }

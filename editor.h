@@ -14,12 +14,7 @@
 #include <stdlib.h>
 
 
-
-
-
-
 // Operaciones Relativas a las lineas (al documento)
-
 editor crearEditor();
 
 texto getCabeza(editor e);
