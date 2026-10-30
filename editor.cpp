@@ -20,7 +20,6 @@ struct nodo_editor {
 	Diccionario dC;
 };
 
-
 editor crearEditor(){
 	editor e = new(nodo_editor);
 
@@ -32,37 +31,47 @@ editor crearEditor(){
 	return e;
 }
 
+linea getInicioMAX(editor e){
+	if(e != NULL) return e->inicioMAX;
+	return NULL;
+}
+
 texto getCabeza(editor e){
 	if(e != NULL) return e->cabeza;
 	return NULL;
 }
+
 texto getCola(editor e){
 	if(e != NULL) return e->cola;
 	return NULL;
 }
+
 int getCantLineas(editor e){
 	if(e != NULL) return e->cant_Lineas;
 	return 0;
 }
+
 Diccionario getdC(editor e){
 	if(e != NULL) return e->dC;
 	return NULL;
 }
-
 
 void setCabeza(editor e, texto cabeza){
 	if(e != NULL){
 		e->cabeza = cabeza;
 	}
 }
+
 void setCola(editor e, texto cola){
 	if(e != NULL){
 		e->cola = cola;
 	}
 }
+
 void setCantLineas(editor e, int cant_Lineas){
 	if(e != NULL) e->cant_Lineas = cant_Lineas;
 }
+
 void setdC(editor e, Diccionario dC){
 	if(e != NULL) e->dC = dC;
 }
@@ -70,7 +79,6 @@ void setdC(editor e, Diccionario dC){
 void borrarEditor(editor e){
 	if(e != NULL) delete e;
 }
-
 
 TipoRetorno InsertarLinea(editor & e){
 // Inserta una nueva línea vacía al final del texto.
@@ -133,15 +141,25 @@ void actualizarUltimasPalabras(editor & e,  Cadena palabra){
 	}
 }
 
+
 TipoRetorno ImprimirUltimasPalabras(editor & e){
 // Imprime las últimas MAX_CANT_ULTIMAS_PALABRAS palabras ingresadas al texto.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	linea iter = getInicioMAX(e);
+	while(iter){
+		iter = Tail(getInicioMAX(e));
+		imprimirLinea(getInicioMAX(e));
+	}
 }
 
 TipoRetorno DestruirEditor(editor & e){
 // Destruye la estructura editor y libera la memoria asociada.
-	return NO_IMPLEMENTADA;
+	if(e){
+		BorrarTodo(e);
+		borrarDiccionario(getdC(e));
+		borrarEditor(e);
+		return OK;
+	}
 }
 
 

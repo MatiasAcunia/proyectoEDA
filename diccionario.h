@@ -32,5 +32,7 @@ char* getPalabra(nodoD d);
 void borrarPalabra(nodoD d);
 int lengthCadena(nodoD d);
 int compararCadena(Cadena palabra, Cadena palabra2);
+void borrarDiccionario(Diccionario d);
+
 
 #endif

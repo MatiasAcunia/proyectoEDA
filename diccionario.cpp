@@ -230,6 +230,22 @@ nodoD auxBPD(nodoD iter, Diccionario dic, Cadena palabraABorrar) {
     return iter;
 }
 
+void auxBorrarDiccionario(nodoD raiz){
+    if(raiz){
+        auxBorrarDiccionario(subde(raiz));
+        auxBorrarDiccionario(subiz(raiz));
+        borrarPalabra(raiz);
+        borrarNodoD(raiz);
+    }
+}
+
+void borrarDiccionario(Diccionario d){
+    if(d){
+        auxBorrarDiccionario(getRaiz(d));
+        borrarDic(d);
+    }
+}
+
 
 TipoRetorno ImprimirDiccionario(editor & e){
 // Muestra las palabras del diccionario alfabéticamente.
