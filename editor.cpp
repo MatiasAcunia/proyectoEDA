@@ -6,6 +6,8 @@
 
 
 #include "editor.h"
+#include "texto.h"
+#include "linea.h"
 // Incluir los modulos realizados.
 #include <string.h>
 #include <iostream>
@@ -30,6 +32,16 @@ editor crearEditor(){
 	e->dC = crearDic();
 
 	return e;
+}
+
+linea getInicioMAX(editor e){
+	
+	return e->inicioMAX;
+}
+
+void setInicioMAX(editor e, linea l){
+
+	e->inicioMAX = l;
 }
 
 texto getCabeza(editor e){
@@ -79,7 +91,7 @@ TipoRetorno InsertarLinea(editor & e){
 	texto t = crearTexto();
 
     if (getCantLineas(e) > 0) {
-		setTail(getCola(e), t);
+		SetTail(getCola(e), t);
 	}else{
 		setCabeza(e, t);
 
@@ -115,21 +127,47 @@ void auxBPL(linea iter) {
     }
 }
 
-void actualizarUltimasPalabras(editor & e,  Cadena palabra){
-    int iter = 0;
-	linea prev = NULL;
-	while(isEmpty(e->inicioMAX)){
-		prev = e->inicioMAX;
-		Tail(e->inicioMAX);
-		iter++;
+void actualizarUltimasPalabras(editor & e,  linea l){
+
+	if(isEmpty(getInicioMAX(e))){
+		linea nuevo = crearLinea();
+		reservarCadena(nuevo, lengthCadena(l));
+		copiarCadena(nuevo, getPalabra(l));
+		setInicioMAX(e, nuevo);
     }
-	if(iter == 3){
-		linea nuevo = crearLinea();
-		linea l = Cons(nuevo);
-		borrarLinea(Tail(prev));
-	}else{
-		linea nuevo = crearLinea();
-		linea l = Cons(nuevo);
+	else{ 
+
+		int i = 0;
+		linea iter = getInicioMAX(e);
+		linea prev = NULL;
+
+		while ((!isEmpty(Tail(iter)))){
+
+			prev = iter;
+			iter = Tail(iter);
+			i++;
+		}
+	
+		if(i == 2){
+
+			linea nuevo = crearLinea();
+			reservarCadena(nuevo, lengthCadena(l));
+			copiarCadena(nuevo, getPalabra(l));
+			linea temp = getInicioMAX(e);
+			setInicioMAX(e, nuevo);
+			SetTail(nuevo, temp);
+			SetTail(prev, NULL);
+			borrarPalabra(iter);
+			borrarLinea(iter);
+		}else{
+			
+			linea nuevo = crearLinea();
+			reservarCadena(nuevo, lengthCadena(l));
+			copiarCadena(nuevo, getPalabra(l));
+			linea temp = getInicioMAX(e);
+			setInicioMAX(e, nuevo);
+			SetTail(nuevo, temp);
+		}
 	}
 }
 
