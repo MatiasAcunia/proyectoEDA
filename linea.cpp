@@ -293,7 +293,6 @@ TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicio
     linea nuevo = crearLinea();
     reservarCadena(nuevo, strlen(palabraAIngresar) + 1);
     copiarCadena(nuevo, palabraAIngresar);
-    actualizarUltimasPalabras(e, nuevo->palabra);
     
     if (getNPalabras(iter) == 0) {
         setInicio(iter, nuevo);
@@ -314,6 +313,7 @@ TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicio
     }
     
     setNPalabras(iter, getNPalabras(iter) + 1);
+    // actualizarUltimasPalabras(e, nuevo);
     return OK;
 }
 

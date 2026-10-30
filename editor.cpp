@@ -38,13 +38,8 @@ linea getInicioMAX(editor e){
 	return NULL;
 }
 
-linea getInicioMAX(editor e){
-	
-	return e->inicioMAX;
-}
-
 void setInicioMAX(editor e, linea l){
-
+	if(e != NULL)
 	e->inicioMAX = l;
 }
 
@@ -99,7 +94,7 @@ TipoRetorno InsertarLinea(editor & e){
 	texto t = crearTexto();
 
     if (getCantLineas(e) > 0) {
-		SetTail(getCola(e), t);
+		setTail(getCola(e), t);
 	}else{
 		setCabeza(e, t);
 
@@ -136,47 +131,36 @@ void auxBPL(linea iter) {
 }
 
 void actualizarUltimasPalabras(editor & e,  linea l){
+	linea nuevo = crearLinea();
+    reservarCadena(nuevo, lengthCadena(l));
+    copiarCadena(nuevo, getPalabra(l));
+    
+    linea viejoInicio = getInicioMAX(e);
+    setInicioMAX(e, nuevo);
+    SetTail(nuevo, viejoInicio);
 
-	if(isEmpty(getInicioMAX(e))){
-		linea nuevo = crearLinea();
-		reservarCadena(nuevo, lengthCadena(l));
-		copiarCadena(nuevo, getPalabra(l));
-		setInicioMAX(e, nuevo);
+
+    if (isEmpty(viejoInicio)) {
+        return;
     }
-	else{ 
 
-		int i = 0;
-		linea iter = getInicioMAX(e);
-		linea prev = NULL;
+    
+    int i = 1; 
+    linea iter = getInicioMAX(e);
+    linea prev = NULL;
 
-		while ((!isEmpty(Tail(iter)))){
+    while (!isEmpty(Tail(iter))) {
+        prev = iter;
+        iter = Tail(iter);
+        i++;
+    }
 
-			prev = iter;
-			iter = Tail(iter);
-			i++;
-		}
-	
-		if(i == 2){
-
-			linea nuevo = crearLinea();
-			reservarCadena(nuevo, lengthCadena(l));
-			copiarCadena(nuevo, getPalabra(l));
-			linea temp = getInicioMAX(e);
-			setInicioMAX(e, nuevo);
-			SetTail(nuevo, temp);
-			SetTail(prev, NULL);
-			borrarPalabra(iter);
-			borrarLinea(iter);
-		}else{
-			
-			linea nuevo = crearLinea();
-			reservarCadena(nuevo, lengthCadena(l));
-			copiarCadena(nuevo, getPalabra(l));
-			linea temp = getInicioMAX(e);
-			setInicioMAX(e, nuevo);
-			SetTail(nuevo, temp);
-		}
-	}
+    
+    if (i > 3) {
+        SetTail(prev, NULL); 
+        borrarPalabra(iter);
+        borrarLinea(iter);
+    }
 }
 
 
@@ -184,20 +168,18 @@ TipoRetorno ImprimirUltimasPalabras(editor & e){
 // Imprime las últimas MAX_CANT_ULTIMAS_PALABRAS palabras ingresadas al texto.
 // Ver más detalles en la letra del obligatorio.
 	linea iter = getInicioMAX(e);
-	while(iter){
-		iter = Tail(getInicioMAX(e));
-		imprimirLinea(getInicioMAX(e));
-	}
+		imprimirLinea(iter);
+	return OK;
 }
 
 TipoRetorno DestruirEditor(editor & e){
 // Destruye la estructura editor y libera la memoria asociada.
-	if(e){
+	if(e != NULL){
 		BorrarTodo(e);
 		borrarDiccionario(getdC(e));
 		borrarEditor(e);
-		return OK;
 	}
+	return OK;
 }
 
 

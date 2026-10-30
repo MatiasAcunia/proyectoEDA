@@ -36,5 +36,5 @@ ImprimirUltimasPalabras()
 ImprimirTexto()
 BorrarTodo()
 ImprimirTexto()
-DestruirEditor()
+
 salir

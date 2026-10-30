@@ -16,6 +16,7 @@ char* getPalabra(linea l);
 void borrarPalabra(linea l);
 int lengthCadena(linea l);
 int compararCadena(Cadena palabra, Cadena palabra2);
+TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra, Cadena palabraAIngresar);
 
 linea Tail(linea l);
 void SetTail(linea l, linea sig);

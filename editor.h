@@ -20,6 +20,10 @@
 // Operaciones Relativas a las lineas (al documento)
 editor crearEditor();
 
+linea getInicioMAX(editor e);
+
+void setInicioMAX(editor e, linea l);
+
 texto getCabeza(editor e);
 
 texto getCola(editor e);
@@ -38,7 +42,7 @@ void setdC(editor e, Diccionario dC);
 
 void borrarEditor(editor e);
 
-void actualizarUltimasPalabras(editor & e, Cadena palabra);
+void actualizarUltimasPalabras(editor & e, linea l);
 
 TipoRetorno InsertarLinea(editor & e);
 // Inserta una nueva línea vacía al final del texto.
@@ -75,9 +79,6 @@ TipoRetorno ComprimirTexto(editor & e);
 // Comprime las palabras del texto. Para implementar esta operación no debe generarse un nuevo documento.
 // Ver más detalles en la letra del obligatorio.
 
-TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra, Cadena palabraAIngresar);
-// Inserta una palabra en una línea.
-// Ver más detalles en la letra del obligatorio.
 
 TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra);
 // Borra la palabra en la posición indicada.
