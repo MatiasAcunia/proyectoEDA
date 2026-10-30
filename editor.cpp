@@ -4,6 +4,7 @@
 // editor.c
 // Modulo de implementacion de editor.
 
+
 #include "editor.h"
 // Incluir los modulos realizados.
 #include <string.h>
@@ -114,6 +115,23 @@ void auxBPL(linea iter) {
     }
 }
 
+void actualizarUltimasPalabras(editor & e,  Cadena palabra){
+    int iter = 0;
+	linea prev = NULL;
+	while(isEmpty(e->inicioMAX)){
+		prev = e->inicioMAX;
+		Tail(e->inicioMAX);
+		iter++;
+    }
+	if(iter == 3){
+		linea nuevo = crearLinea();
+		linea l = Cons(nuevo);
+		borrarLinea(Tail(prev));
+	}else{
+		linea nuevo = crearLinea();
+		linea l = Cons(nuevo);
+	}
+}
 
 TipoRetorno ImprimirUltimasPalabras(editor & e){
 // Imprime las últimas MAX_CANT_ULTIMAS_PALABRAS palabras ingresadas al texto.

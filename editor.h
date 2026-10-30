@@ -7,11 +7,14 @@
 // editor.h
 // Modulo de especificacion de editor.
 
-#include "definiciones.h"
-#include "texto.h"
-#include "diccionario.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+#include "definiciones.h"
+#include "linea.h"
+#include "texto.h"
+#include "diccionario.h"
+
 
 
 // Operaciones Relativas a las lineas (al documento)
@@ -35,6 +38,7 @@ void setdC(editor e, Diccionario dC);
 
 void borrarEditor(editor e);
 
+void actualizarUltimasPalabras(editor & e, Cadena palabra);
 
 TipoRetorno InsertarLinea(editor & e);
 // Inserta una nueva línea vacía al final del texto.

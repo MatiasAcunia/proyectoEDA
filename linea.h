@@ -8,7 +8,6 @@
 // Modulo para definiciones generales del proyecto como constantes, etc.
 
 
-typedef struct nodo_linea * linea;
 
 linea crearLinea();
 void reservarCadena(linea l, int length);
@@ -24,13 +23,5 @@ linea Snoc(linea l);
 linea Cons(linea l);
 bool isEmpty(linea l);
 void borrarLinea(linea l);
-
-
-
-
-
-
-
-
 
 #endif
