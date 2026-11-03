@@ -251,7 +251,32 @@ TipoRetorno ImprimirDiccionario(editor & e){
 // Muestra las palabras del diccionario alfabéticamente.
 // Esta operación debe realizarse en O(n) peor caso.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+	if (e == NULL || getdC(e) == NULL){
+
+        return ERROR;
+    }
+
+    nodoD iter = getRaiz(getdC(e));
+
+    auxID(iter);
+
+    return OK;
+}
+
+void auxID(nodoD iter){
+
+    if (iter == NULL){
+        
+        return;
+    }
+
+    Cadena palabra = getPalabra(iter);
+
+    printf("%s ", palabra);
+
+    auxID(subiz(iter));
+
+    auxID(subde(iter));
 }
 
 

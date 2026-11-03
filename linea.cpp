@@ -313,7 +313,7 @@ TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicio
     }
     
     setNPalabras(iter, getNPalabras(iter) + 1);
-    // actualizarUltimasPalabras(e, nuevo);
+    actualizarUltimasPalabras(e, nuevo);
     return OK;
 }
 

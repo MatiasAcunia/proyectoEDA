@@ -25,6 +25,7 @@ struct nodo_editor {
 editor crearEditor(){
 	editor e = new(nodo_editor);
 
+	e->inicioMAX = NULL;
 	e->cabeza = NULL;
 	e->cola = NULL;
 	e->cant_Lineas = 0;
@@ -131,35 +132,46 @@ void auxBPL(linea iter) {
 }
 
 void actualizarUltimasPalabras(editor & e,  linea l){
-	linea nuevo = crearLinea();
-    reservarCadena(nuevo, lengthCadena(l));
-    copiarCadena(nuevo, getPalabra(l));
-    
-    linea viejoInicio = getInicioMAX(e);
-    setInicioMAX(e, nuevo);
-    SetTail(nuevo, viejoInicio);
-
-
-    if (isEmpty(viejoInicio)) {
+	if (e == NULL || l == NULL) {
         return;
     }
 
-    
-    int i = 1; 
-    linea iter = getInicioMAX(e);
-    linea prev = NULL;
+    Cadena palabra = getPalabra(l);
 
-    while (!isEmpty(Tail(iter))) {
-        prev = iter;
-        iter = Tail(iter);
-        i++;
+    if (palabra == NULL) {
+        return;
     }
 
-    
-    if (i > 3) {
-        SetTail(prev, NULL); 
-        borrarPalabra(iter);
-        borrarLinea(iter);
+    linea nuevo = crearLinea();
+
+    reservarCadena(nuevo, lengthCadena(l) + 1);
+    copiarCadena(nuevo, palabra);
+
+    delete[] palabra;
+
+    SetTail(nuevo, getInicioMAX(e));
+    setInicioMAX(e, nuevo);
+
+    linea actual = nuevo;
+    int cantidad = 1;
+
+    while (cantidad < MAX_CANT_ULTIMAS_PALABRAS &&
+           !isEmpty(Tail(actual))) {
+
+        actual = Tail(actual);
+        cantidad++;
+    }
+
+    linea sobrante = Tail(actual);
+    SetTail(actual, NULL);
+
+    while (!isEmpty(sobrante)) {
+        linea siguiente = Tail(sobrante);
+
+        borrarPalabra(sobrante);
+        borrarLinea(sobrante);
+
+        sobrante = siguiente;
     }
 }
 
@@ -174,12 +186,19 @@ TipoRetorno ImprimirUltimasPalabras(editor & e){
 
 TipoRetorno DestruirEditor(editor & e){
 // Destruye la estructura editor y libera la memoria asociada.
-	if(e != NULL){
-		BorrarTodo(e);
-		borrarDiccionario(getdC(e));
-		borrarEditor(e);
-	}
-	return OK;
+	 if (e != NULL) {
+        BorrarTodo(e);
+
+        auxBPL(getInicioMAX(e));
+        setInicioMAX(e, NULL);
+
+        borrarDiccionario(getdC(e));
+        borrarEditor(e);
+
+        e = NULL;
+    }
+
+    return OK;
 }
 
 
