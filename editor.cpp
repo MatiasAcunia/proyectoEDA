@@ -59,7 +59,7 @@ int getCantLineas(editor e){
 	return 0;
 }
 
-Diccionario getdC(editor e){
+Diccionario getDiccionario(editor e){
 	if(e != NULL) return e->dC;
 	return NULL;
 }
@@ -117,7 +117,7 @@ TipoRetorno BorrarTodo(editor & e) {
 
 void auxBT(texto iter) {
     if (iter != NULL) {
-        auxBT(Tail(iter));
+        auxBT(TailTexto(iter));
         auxBPL(getInicio(iter));
         borrar(iter);
     }
@@ -192,7 +192,7 @@ TipoRetorno DestruirEditor(editor & e){
         auxBPL(getInicioMAX(e));
         setInicioMAX(e, NULL);
 
-        borrarDiccionario(getdC(e));
+        borrarDiccionario(getDiccionario(e));
         borrarEditor(e);
 
         e = NULL;

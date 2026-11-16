@@ -37,6 +37,13 @@ Diccionario crearDic() {
 	return D;
 }
 
+Cadena getDicCadena(nodoD d){
+    if(d != NULL){
+        return d->palabra;
+    }
+    return NULL;
+}
+
 nodoD getRaiz(Diccionario d){
     if(d != NULL){
         return d->raiz;
@@ -147,7 +154,7 @@ nodoD auxBPD(nodoD iter, Diccionario dic, Cadena palabraABorrar);
 TipoRetorno IngresarPalabraDiccionario(editor & e, Cadena palabraAIngresar) {
     if (e == NULL || palabraAIngresar == NULL) return ERROR;
 
-    Diccionario dic = getdC(e);
+    Diccionario dic = getDiccionario(e);
     if (dic == NULL) {
         dic = crearDic();
         setdC(e, dic);
@@ -182,12 +189,12 @@ nodoD auxIPD(nodoD iter, Diccionario dic, Cadena palabraAIngresar) {
 }
 
 TipoRetorno BorrarPalabraDiccionario(editor & e, Cadena palabraABorrar) {
-    if (e == NULL || palabraABorrar == NULL || getdC(e) == NULL ||
-        getRaiz(getdC(e)) == NULL) {
+    if (e == NULL || palabraABorrar == NULL || getDiccionario(e) == NULL ||
+        getRaiz(getDiccionario(e)) == NULL) {
         return ERROR;
     }
 
-    Diccionario dic = getdC(e);
+    Diccionario dic = getDiccionario(e);
     int anteriores = getnPalabras(dic);
     setRaiz(dic, auxBPD(getRaiz(dic), dic, palabraABorrar));
 
@@ -251,12 +258,12 @@ TipoRetorno ImprimirDiccionario(editor & e){
 // Muestra las palabras del diccionario alfabéticamente.
 // Esta operación debe realizarse en O(n) peor caso.
 // Ver más detalles en la letra del obligatorio.
-	if (e == NULL || getdC(e) == NULL){
+	if (e == NULL || getDiccionario(e) == NULL){
 
         return ERROR;
     }
 
-    nodoD iter = getRaiz(getdC(e));
+    nodoD iter = getRaiz(getDiccionario(e));
 
     auxID(iter);
 
@@ -280,4 +287,13 @@ void auxID(nodoD iter){
 }
 
 
-
+void compararArbol(linea l, nodoD d){
+    if(!isEmptyNodoD(d)){
+        int res = compararCadena(getPalabra(l), getDicCadena(d));
+        if(res < 0){
+            printf("%s\n", getPalabra(l));
+        }
+        compararArbol(l, subde(d));
+        compararArbol(l, subiz(d));
+    }
+}

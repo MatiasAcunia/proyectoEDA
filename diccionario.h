@@ -11,6 +11,7 @@ typedef struct diccionario * Diccionario;
 typedef struct nodo_diccionario * nodoD;
 
 Diccionario crearDic();
+Cadena getDicCadena(nodoD d);
 nodoD getRaiz(Diccionario d);
 int getnPalabras(Diccionario d);
 void setnPalabras(Diccionario d, int n);
@@ -34,6 +35,6 @@ int lengthCadena(nodoD d);
 int compararCadena(Cadena palabra, Cadena palabra2);
 void borrarDiccionario(Diccionario d);
 void auxID(nodoD iter);
-
+void compararArbol(linea l, nodoD d);
 
 #endif

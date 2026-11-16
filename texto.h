@@ -1,7 +1,6 @@
 #ifndef TEXTO_H
 #define TEXTO_H
 
-#include "linea.h"
 
 
 // Estructuras de Datos y Algoritmos - Obligatorio 2026
@@ -19,7 +18,7 @@ texto crearTexto();
 
 int getNPalabras(texto t);
 
-texto Tail(texto t);
+texto TailTexto(texto t);
 
 linea getInicio(texto t);
 

@@ -5,6 +5,7 @@
 // Modulo de implementacion de editor.
 
 #include "editor.h"
+#include "linea.h"
 // Incluir los modulos realizados.
 #include <string.h>
 #include <iostream>
@@ -16,19 +17,19 @@ struct nodo_texto{
 	int n_palabras;
 	texto sig;
 	linea inicio, fin;
-	
+
 };
 
 
-// get set atributos, borrado, head, tail, snoc, cons, isEmpty 
+// get set atributos, borrado, head, tail, snoc, cons, isEmpty
 texto crearTexto(){
 	texto t = new(nodo_texto);
-	
+
 	t->fin = NULL;
 	t->inicio = NULL;
 	t->n_palabras = 0;
 	t->sig = NULL;
-	
+
 	return t;
 }
 
@@ -37,7 +38,12 @@ int getNPalabras(texto t){
 	return 0;
 }
 
-texto Tail(texto t){
+bool isEmptyTexto(texto t){
+    return (t == NULL);
+}
+
+
+texto TailTexto(texto t){
 	if(t != NULL) return t->sig;
 	return NULL;
 }
@@ -104,7 +110,7 @@ void auxIT(editor & e, texto iter, int indice) {
         printf("%d: ", indice);
         imprimirLinea(getInicio(iter));
         printf("\n");
-        auxIT(e, Tail(iter), indice + 1);
+        auxIT(e, TailTexto(iter), indice + 1);
     }
 }
 
@@ -113,14 +119,14 @@ TipoRetorno ComprimirTexto(editor & e) {
 
     texto iter = getCabeza(e);
     while (iter != NULL) {
-        int eliminadas = appendPalabras(iter, Tail(iter), getFin(iter), getInicio(Tail(iter)), 0);
+        int eliminadas = appendPalabras(iter, TailTexto(iter), getFin(iter), getInicio(TailTexto(iter)), 0);
         setCantLineas(e, getCantLineas(e) - eliminadas);
 
-        if (Tail(iter) == NULL) {
+        if (TailTexto(iter) == NULL) {
             setCola(e, iter);
             break;
         }
-        iter = Tail(iter);
+        iter = TailTexto(iter);
     }
 
     return OK;
@@ -129,10 +135,10 @@ TipoRetorno ComprimirTexto(editor & e) {
 int appendPalabras(texto actLinea, texto sigLinea, linea iterL1, linea iterL2, int lElim) {
     while (sigLinea != NULL) {
         if (getNPalabras(sigLinea) == 0) {
-            setTail(actLinea, Tail(sigLinea));
+            setTail(actLinea, TailTexto(sigLinea));
             borrar(sigLinea);
             lElim++;
-            sigLinea = Tail(actLinea);
+            sigLinea = TailTexto(actLinea);
             continue;
         }
 
@@ -161,10 +167,19 @@ int appendPalabras(texto actLinea, texto sigLinea, linea iterL1, linea iterL2, i
     return lElim;
 }
 
+void auxImprimirTextoIncorrecto(texto t, Diccionario d){
+    if(!isEmptyTexto(t)){
+        auxBuscarIncorrecto(getInicio(t), getRaiz(d));
+        auxImprimirTextoIncorrecto(TailTexto(t), d);
+    }
+}
+
+
 
 TipoRetorno ImprimirTextoIncorrecto(editor & e){
 // Muestra las palabras del texto que no se encuentran en el diccionario.
 // Ver más detalles en la letra del obligatorio.
-	return NO_IMPLEMENTADA;
+    auxImprimirTextoIncorrecto(getCabeza(e), getDiccionario(e));
+    return OK;
 }
 

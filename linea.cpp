@@ -135,17 +135,17 @@ TipoRetorno BorrarLinea(editor & e, Posicion posicionLinea) {
     texto temp;
     if (iposicionLinea == 1) {
         temp = getCabeza(e);
-        setCabeza(e, Tail(temp));
+        setCabeza(e, TailTexto(temp));
         if (getCantLineas(e) == 1) {
             setCola(e, NULL);
         }
     } else {
         texto it = getCabeza(e);
         for (int i = 1; i < iposicionLinea - 1; i++) {
-            it = Tail(it);
+            it = TailTexto(it);
         }
-        temp = Tail(it);
-        setTail(it, Tail(temp));
+        temp = TailTexto(it);
+        setTail(it, TailTexto(temp));
         if (iposicionLinea == getCantLineas(e)) {
             setCola(e, it);
         }
@@ -202,7 +202,7 @@ void borrarPalabra(texto txt, Cadena palabraABorrar) {
 void auxBOP(texto iter, Cadena palabraABorrar) {
     if (iter != NULL) {
         borrarPalabra(iter, palabraABorrar);
-        auxBOP(Tail(iter), palabraABorrar);
+        auxBOP(TailTexto(iter), palabraABorrar);
     }
 }
 
@@ -228,9 +228,9 @@ TipoRetorno InsertarLineaEnPosicion(editor & e, Posicion posicionLinea) {
     } else {
         texto it = getCabeza(e);
         for (int i = 1; i < iposicionLinea - 1; i++) {
-            it = Tail(it);
+            it = TailTexto(it);
         }
-        setTail(nuevo, Tail(it));
+        setTail(nuevo, TailTexto(it));
         setTail(it, nuevo);
     }
     
@@ -248,7 +248,7 @@ TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionP
     
     texto iter = getCabeza(e);
     for (int i = 1; i < iposicionLinea; i++) {
-        iter = Tail(iter);
+        iter = TailTexto(iter);
     }
     
     if (iposicionPalabra == 0 || iposicionPalabra > getNPalabras(iter)) {
@@ -282,7 +282,7 @@ TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicio
     
     texto iter = getCabeza(e);
     for (int i = 1; i < iposicionLinea; i++) {
-        iter = Tail(iter);
+        iter = TailTexto(iter);
     }
     
     if (iposicionPalabra == 0 || iposicionPalabra > getNPalabras(iter) + 1 ||
@@ -327,7 +327,7 @@ TipoRetorno BorrarOcurrenciasPalabraEnLinea(editor & e, Posicion posicionLinea, 
     
     texto iter = getCabeza(e);
     for (int i = 1; i < iposicionLinea; i++) {
-        iter = Tail(iter);
+        iter = TailTexto(iter);
     }
     
     borrarPalabra(iter, palabraABorrar);
@@ -343,7 +343,7 @@ TipoRetorno ImprimirLinea(editor & e, Posicion posicionLinea) {
 
     texto iter = getCabeza(e);
     for (int i = 1; i < iposicionLinea; i++) {
-        iter = Tail(iter);
+        iter = TailTexto(iter);
     }
 
     printf("Salida:\n");
@@ -363,5 +363,17 @@ void imprimirLinea(linea l) {
         delete[] palabra;
 
         imprimirLinea(Tail(l));
+    }
+}
+
+
+
+
+
+
+void auxBuscarIncorrecto(linea l, nodoD raiz){
+    while(!isEmpty(l)){
+        compararArbol(l, raiz);
+        l = Tail(l);
     }
 }

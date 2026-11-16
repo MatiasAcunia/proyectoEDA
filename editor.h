@@ -30,7 +30,7 @@ texto getCola(editor e);
 
 int getCantLineas(editor e);
 
-Diccionario getdC(editor e);
+Diccionario getDiccionario(editor e);
 
 void setCabeza(editor e, texto cabeza);
 
