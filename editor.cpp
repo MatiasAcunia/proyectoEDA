@@ -177,12 +177,23 @@ void actualizarUltimasPalabras(editor & e,  linea l){
 
 
 TipoRetorno ImprimirUltimasPalabras(editor & e){
-// Imprime las últimas MAX_CANT_ULTIMAS_PALABRAS palabras ingresadas al texto.
-// Ver más detalles en la letra del obligatorio.
-	linea iter = getInicioMAX(e);
-		imprimirLinea(iter);
-	return OK;
+    if (e == NULL) return ERROR;
+    linea iter = getInicioMAX(e);
+    if (iter == NULL) {
+        printf("No se ingresaron palabras\n");
+        return OK;
+    }
+    while (iter != NULL) {
+        Cadena palabra = getPalabra(iter);
+        if (palabra != NULL) {
+            printf("%s\n", palabra);
+            delete[] palabra;
+        }
+        iter = Tail(iter);
+    }
+    return OK;
 }
+
 
 TipoRetorno DestruirEditor(editor & e){
 // Destruye la estructura editor y libera la memoria asociada.
