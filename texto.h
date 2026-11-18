@@ -40,4 +40,6 @@ bool isEmpty(texto t);
 
 void borrar(texto t);
 
+
+
 #endif

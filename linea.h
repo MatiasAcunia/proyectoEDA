@@ -15,6 +15,9 @@ linea crearLinea();
 void reservarCadena(linea l, int length);
 void copiarCadena(linea l, Cadena palabra);
 char* getPalabra(linea l);
+bool getExiste(linea l);
+void setExiste(linea l, bool res);
+
 void borrarPalabra(linea l);
 int lengthCadena(linea l);
 int compararCadena(Cadena palabra, Cadena palabra2);
@@ -27,5 +30,7 @@ linea Snoc(linea l);
 linea Cons(linea l);
 bool isEmpty(linea l);
 void borrarLinea(linea l);
+
+linea auxImprimirLineasIncorrectas(linea l, linea impresion);
 
 #endif

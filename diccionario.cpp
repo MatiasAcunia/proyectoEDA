@@ -56,6 +56,7 @@ int getnPalabras(Diccionario d){
     }
     return 0; 
 }
+
 void setnPalabras(Diccionario d, int n){
     if(d != NULL){
         d->nPalabras = n;
@@ -66,6 +67,8 @@ void setRaiz(Diccionario d, nodoD raiz){
         d->raiz = raiz;
     } 
 }
+
+
 void borrarDic(Diccionario d){
     if(d != NULL){
         delete d; 
@@ -287,13 +290,15 @@ void auxID(nodoD iter){
 }
 
 
-void compararArbol(linea l, nodoD d){
+void existeEnDic(linea l, nodoD d){
     if(!isEmptyNodoD(d)){
         int res = compararCadena(getPalabra(l), getDicCadena(d));
         if(res < 0){
-            printf("%s\n", getPalabra(l));
+            setExiste(l, true);
+        }else{
+            existeEnDic(l, subde(d));
+            existeEnDic(l, subiz(d));
         }
-        compararArbol(l, subde(d));
-        compararArbol(l, subiz(d));
     }
 }
+

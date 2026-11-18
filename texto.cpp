@@ -167,19 +167,20 @@ int appendPalabras(texto actLinea, texto sigLinea, linea iterL1, linea iterL2, i
     return lElim;
 }
 
-void auxImprimirTextoIncorrecto(texto t, Diccionario d){
+
+
+void auxImprimirTextoIncorrecto(texto t){
     if(!isEmptyTexto(t)){
-        auxBuscarIncorrecto(getInicio(t), getRaiz(d));
-        auxImprimirTextoIncorrecto(TailTexto(t), d);
+        linea l = crearLinea();
+        auxImprimirLineasIncorrectas(getInicio(t), l);
+        auxImprimirTextoIncorrecto(TailTexto(t));
     }
 }
-
-
 
 TipoRetorno ImprimirTextoIncorrecto(editor & e){
 // Muestra las palabras del texto que no se encuentran en el diccionario.
 // Ver más detalles en la letra del obligatorio.
-    auxImprimirTextoIncorrecto(getCabeza(e), getDiccionario(e));
+    auxImprimirTextoIncorrecto(getCabeza(e));
     return OK;
 }
 

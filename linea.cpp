@@ -15,6 +15,7 @@ using namespace std;
 struct nodo_linea{
     Cadena palabra;
 	linea sig;
+    bool existe;
 };
 
 
@@ -46,6 +47,19 @@ char* getPalabra(linea l){
 		return palabra;
 	}
 	return NULL;
+}
+
+bool getExiste(linea l){
+    if(l != NULL){
+        return l->existe;
+    }
+    return NULL; 
+}
+
+void setExiste(linea l, bool res){
+    if(l != NULL){
+        l->existe = res;
+    } 
 }
 
 void borrarPalabra(linea l){
@@ -293,6 +307,8 @@ TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicio
     linea nuevo = crearLinea();
     reservarCadena(nuevo, strlen(palabraAIngresar) + 1);
     copiarCadena(nuevo, palabraAIngresar);
+    Diccionario dic = getDiccionario(e);
+    existeEnDic(nuevo, getRaiz(dic));
     
     if (getNPalabras(iter) == 0) {
         setInicio(iter, nuevo);
@@ -370,10 +386,54 @@ void imprimirLinea(linea l) {
 
 
 
+// void auxBuscarIncorrecto(linea l, nodoD raiz){
+//     while(!isEmpty(l)){
+//         compararArbol(l, raiz);
+//         l = Tail(l);
+//     }
+// }
 
-void auxBuscarIncorrecto(linea l, nodoD raiz){
-    while(!isEmpty(l)){
-        compararArbol(l, raiz);
-        l = Tail(l);
+// void compararArbol(linea l, nodoD d){
+//     if(!isEmptyNodoD(d)){
+//         int res = compararCadena(getPalabra(l), getDicCadena(d));
+//         if(res < 0){
+//             printf("%s\n", getPalabra(l));
+//         }
+//         compararArbol(l, subde(d));
+//         compararArbol(l, subiz(d));
+//     }
+// }
+bool existeEnImpresion(linea l, linea impresion){
+    int res = compararCadena(getPalabra(l), getPalabra(impresion));
+    if(isEmpty(l)){
+        return false;
+    }
+    if(res < 0){
+        return existeEnImpresion(l, impresion);
+    }else{
+        return true;
     }
 }
+
+
+linea auxImprimirLineasIncorrectas(linea l, linea impresion){
+    if(getExiste(l) == false){
+        //si no esta en el diccionario
+        bool res = existeEnImpresion(l, impresion);
+        if(res == false){
+            //si no esta en la impresion
+            printf("%s\n", getPalabra(l));
+            impresion = Cons(l);
+
+        }else{
+            //si esta en la impresion
+            auxImprimirLineasIncorrectas(Tail(l), impresion);
+
+        }
+    }else{
+        //si esta en el diccionario
+        auxImprimirLineasIncorrectas(Tail(l), impresion);
+    }
+    return impresion;
+}
+

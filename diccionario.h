@@ -6,6 +6,7 @@
 //
 // definiciones.hS
 // Modulo para definiciones generales del proyecto como constantes, etc.
+#include "linea.h"
 
 typedef struct diccionario * Diccionario;
 typedef struct nodo_diccionario * nodoD;
@@ -36,5 +37,6 @@ int compararCadena(Cadena palabra, Cadena palabra2);
 void borrarDiccionario(Diccionario d);
 void auxID(nodoD iter);
 void compararArbol(linea l, nodoD d);
+void existeEnDic(linea l, nodoD d);
 
 #endif
