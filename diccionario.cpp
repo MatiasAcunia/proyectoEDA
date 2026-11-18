@@ -258,47 +258,41 @@ void borrarDiccionario(Diccionario d){
 
 
 TipoRetorno ImprimirDiccionario(editor & e){
-// Muestra las palabras del diccionario alfabéticamente.
-// Esta operación debe realizarse en O(n) peor caso.
-// Ver más detalles en la letra del obligatorio.
-	if (e == NULL || getDiccionario(e) == NULL){
-
-        return ERROR;
+    if (e == NULL) return ERROR;
+    Diccionario dic = getDiccionario(e);
+    if (dic == NULL || getRaiz(dic) == NULL) {
+        printf("Diccionario vacio\n");
+        return OK;
     }
-
-    nodoD iter = getRaiz(getDiccionario(e));
-
-    auxID(iter);
-
+    auxID(getRaiz(dic));
     return OK;
 }
 
 void auxID(nodoD iter){
-
-    if (iter == NULL){
-        
-        return;
-    }
-
-    Cadena palabra = getPalabra(iter);
-
-    printf("%s ", palabra);
-
+    if (iter == NULL) return;
     auxID(subiz(iter));
-
+    printf("%s\n", getDicCadena(iter));
     auxID(subde(iter));
 }
 
 
 void existeEnDic(linea l, nodoD d){
-    if(!isEmptyNodoD(d)){
-        int res = compararCadena(getPalabra(l), getDicCadena(d));
-        if(res < 0){
-            setExiste(l, true);
-        }else{
-            existeEnDic(l, subde(d));
-            existeEnDic(l, subiz(d));
-        }
+    if (l == NULL) return;
+    Cadena palabra = getPalabra(l);
+    if (palabra == NULL) {
+        setExiste(l, false);
+        return;
     }
-}
 
+    bool encontrada = false;
+    while (d != NULL) {
+        int res = compararCadena(palabra, getDicCadena(d));
+        if (res == 0) {
+            encontrada = true;
+            break;
+        }
+        d = res < 0 ? subiz(d) : subde(d);
+    }
+    setExiste(l, encontrada);
+    delete[] palabra;
+}
