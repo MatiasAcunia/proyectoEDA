@@ -22,7 +22,6 @@ void borrarPalabra(linea l);
 int lengthCadena(linea l);
 int compararCadena(Cadena palabra, Cadena palabra2);
 TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra, Cadena palabraAIngresar);
-void auxBuscarIncorrecto(linea l, nodoD d);
 
 linea Tail(linea l);
 void SetTail(linea l, linea sig);
@@ -31,6 +30,5 @@ linea Cons(linea l);
 bool isEmpty(linea l);
 void borrarLinea(linea l);
 
-linea auxImprimirLineasIncorrectas(linea l, linea impresion);
 
 #endif
