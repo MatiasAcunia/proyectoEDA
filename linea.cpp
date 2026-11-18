@@ -8,6 +8,7 @@
 #include "linea.h"
 #include "definiciones.h"
 #include <string.h>
+#include <strings.h>
 #include <iostream>
 using namespace std;
 
@@ -23,6 +24,7 @@ linea crearLinea(){
 	linea l = new(nodo_linea);
 	l->sig = NULL;
 	l->palabra = NULL;
+    l->existe = false;
 	return l;
 }
 
@@ -53,7 +55,7 @@ bool getExiste(linea l){
     if(l != NULL){
         return l->existe;
     }
-    return NULL; 
+    return false;
 }
 
 void setExiste(linea l, bool res){
@@ -78,7 +80,7 @@ int lengthCadena(linea l){
 
 int compararCadena(Cadena palabra, Cadena palabra2){
 	if((palabra != NULL) && (palabra2 != NULL)){
-		return strcmp(palabra, palabra2);
+		return strcasecmp(palabra, palabra2);
 	}
 	return 0;
 }
@@ -288,28 +290,20 @@ TipoRetorno BorrarOcurrenciasPalabraEnTexto(editor & e, Cadena palabraABorrar) {
 TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicionPalabra, Cadena palabraAIngresar) {
     int iposicionLinea = static_cast<int>(posicionLinea);
     int iposicionPalabra = static_cast<int>(posicionPalabra);
-    
-    
-    if (e == NULL || palabraAIngresar == NULL || iposicionLinea == 0 || iposicionLinea > getCantLineas(e)) {
-        return ERROR;
-    }
-    
+
+    if (e == NULL || palabraAIngresar == NULL || iposicionLinea == 0 ||
+        iposicionLinea > getCantLineas(e)) return ERROR;
+
     texto iter = getCabeza(e);
-    for (int i = 1; i < iposicionLinea; i++) {
-        iter = TailTexto(iter);
-    }
-    
-    if (iposicionPalabra == 0 || iposicionPalabra > getNPalabras(iter) + 1 ||
-    getNPalabras(iter) >= MAX_CANT_PALABRAS_X_LINEA) {
-        return ERROR;
-    }
-    
+    for (int i = 1; i < iposicionLinea; i++) iter = TailTexto(iter);
+
+    if (iposicionPalabra == 0 || iposicionPalabra > getNPalabras(iter) + 1) return ERROR;
+
     linea nuevo = crearLinea();
     reservarCadena(nuevo, strlen(palabraAIngresar) + 1);
     copiarCadena(nuevo, palabraAIngresar);
-    Diccionario dic = getDiccionario(e);
-    existeEnDic(nuevo, getRaiz(dic));
-    
+    existeEnDic(nuevo, getRaiz(getDiccionario(e)));
+
     if (getNPalabras(iter) == 0) {
         setInicio(iter, nuevo);
         setFin(iter, nuevo);
@@ -321,14 +315,36 @@ TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicio
         setFin(iter, nuevo);
     } else {
         linea prev = getInicio(iter);
-        for (int i = 1; i < iposicionPalabra - 1; i++) {
-            prev = Tail(prev);
-        }
+        for (int i = 1; i < iposicionPalabra - 1; i++) prev = Tail(prev);
         SetTail(nuevo, Tail(prev));
         SetTail(prev, nuevo);
     }
-    
     setNPalabras(iter, getNPalabras(iter) + 1);
+
+    // Una linea llena desplaza su ultima palabra al principio de la siguiente.
+    texto actual = iter;
+    while (getNPalabras(actual) > MAX_CANT_PALABRAS_X_LINEA) {
+        linea ultima = getFin(actual);
+        linea anterior = getInicio(actual);
+        while (Tail(anterior) != ultima) anterior = Tail(anterior);
+
+        SetTail(anterior, NULL);
+        setFin(actual, anterior);
+        setNPalabras(actual, getNPalabras(actual) - 1);
+
+        texto siguiente = TailTexto(actual);
+        if (siguiente == NULL) {
+            InsertarLinea(e);
+            siguiente = TailTexto(actual);
+        }
+
+        SetTail(ultima, getInicio(siguiente));
+        setInicio(siguiente, ultima);
+        if (getFin(siguiente) == NULL) setFin(siguiente, ultima);
+        setNPalabras(siguiente, getNPalabras(siguiente) + 1);
+        actual = siguiente;
+    }
+
     actualizarUltimasPalabras(e, nuevo);
     return OK;
 }
@@ -362,23 +378,22 @@ TipoRetorno ImprimirLinea(editor & e, Posicion posicionLinea) {
         iter = TailTexto(iter);
     }
 
-    printf("Salida:\n");
-    printf("%u: ", iposicionLinea);
+    printf("%u:", posicionLinea);
+    if (getInicio(iter) != NULL) printf(" ");
     imprimirLinea(getInicio(iter));
     printf("\n");
     return OK;
 }
 
 void imprimirLinea(linea l) {
-    if (l != NULL) {
+    while (l != NULL) {
         Cadena palabra = getPalabra(l);
-
-        printf("%s", palabra);
-        printf(" ");
-
-        delete[] palabra;
-
-        imprimirLinea(Tail(l));
+        if (palabra != NULL) {
+            printf("%s", palabra);
+            delete[] palabra;
+        }
+        l = Tail(l);
+        if (l != NULL) printf(" ");
     }
 }
 
