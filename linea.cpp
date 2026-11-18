@@ -291,13 +291,13 @@ TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicio
     int iposicionLinea = static_cast<int>(posicionLinea);
     int iposicionPalabra = static_cast<int>(posicionPalabra);
 
-    if (e == NULL || palabraAIngresar == NULL || iposicionLinea == 0 ||
+    if (e == NULL || palabraAIngresar == NULL || iposicionLinea < 1 ||
         iposicionLinea > getCantLineas(e)) return ERROR;
 
     texto iter = getCabeza(e);
     for (int i = 1; i < iposicionLinea; i++) iter = TailTexto(iter);
 
-    if (iposicionPalabra == 0 || iposicionPalabra > getNPalabras(iter) + 1) return ERROR;
+    if (iposicionPalabra < 1 || iposicionPalabra > getNPalabras(iter) + 1) return ERROR;
 
     linea nuevo = crearLinea();
     reservarCadena(nuevo, strlen(palabraAIngresar) + 1);
@@ -396,59 +396,3 @@ void imprimirLinea(linea l) {
         if (l != NULL) printf(" ");
     }
 }
-
-
-
-
-
-// void auxBuscarIncorrecto(linea l, nodoD raiz){
-//     while(!isEmpty(l)){
-//         compararArbol(l, raiz);
-//         l = Tail(l);
-//     }
-// }
-
-// void compararArbol(linea l, nodoD d){
-//     if(!isEmptyNodoD(d)){
-//         int res = compararCadena(getPalabra(l), getDicCadena(d));
-//         if(res < 0){
-//             printf("%s\n", getPalabra(l));
-//         }
-//         compararArbol(l, subde(d));
-//         compararArbol(l, subiz(d));
-//     }
-// }
-bool existeEnImpresion(linea l, linea impresion){
-    int res = compararCadena(getPalabra(l), getPalabra(impresion));
-    if(isEmpty(l)){
-        return false;
-    }
-    if(res < 0){
-        return existeEnImpresion(l, impresion);
-    }else{
-        return true;
-    }
-}
-
-
-linea auxImprimirLineasIncorrectas(linea l, linea impresion){
-    if(getExiste(l) == false){
-        //si no esta en el diccionario
-        bool res = existeEnImpresion(l, impresion);
-        if(res == false){
-            //si no esta en la impresion
-            printf("%s\n", getPalabra(l));
-            impresion = Cons(l);
-
-        }else{
-            //si esta en la impresion
-            auxImprimirLineasIncorrectas(Tail(l), impresion);
-
-        }
-    }else{
-        //si esta en el diccionario
-        auxImprimirLineasIncorrectas(Tail(l), impresion);
-    }
-    return impresion;
-}
-
