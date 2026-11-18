@@ -99,18 +99,21 @@ void auxIT(editor & e, texto iter, int indice);
 
 TipoRetorno ImprimirTexto(editor & e) {
     if (e == NULL) return ERROR;
-
-    printf("Salida:\n");
+    if (getCabeza(e) == NULL) {
+        printf("Texto vacio\n");
+        return OK;
+    }
     auxIT(e, getCabeza(e), 1);
     return OK;
 }
 
 void auxIT(editor & e, texto iter, int indice) {
-    if (iter != NULL) {
-        printf("%d: ", indice);
+    while (iter != NULL) {
+        printf("%d:", indice++);
+        if (getInicio(iter) != NULL) printf(" ");
         imprimirLinea(getInicio(iter));
         printf("\n");
-        auxIT(e, TailTexto(iter), indice + 1);
+        iter = TailTexto(iter);
     }
 }
 
@@ -129,6 +132,10 @@ TipoRetorno ComprimirTexto(editor & e) {
         iter = TailTexto(iter);
     }
 
+    // La ultima linea tambien debe desaparecer si quedo vacia.
+    while (getCantLineas(e) > 0 && getNPalabras(getCola(e)) == 0) {
+        BorrarLinea(e, getCantLineas(e));
+    }
     return OK;
 }
 
@@ -169,18 +176,34 @@ int appendPalabras(texto actLinea, texto sigLinea, linea iterL1, linea iterL2, i
 
 
 
-void auxImprimirTextoIncorrecto(texto t){
-    if(!isEmptyTexto(t)){
-        linea l = crearLinea();
-        auxImprimirLineasIncorrectas(getInicio(t), l);
-        auxImprimirTextoIncorrecto(TailTexto(t));
+TipoRetorno ImprimirTextoIncorrecto(editor & e) {
+    if (e == NULL) return ERROR;
+    texto t = getCabeza(e);
+    if (t == NULL) {
+        printf("Texto vacio\n");
+        return OK;
     }
-}
 
-TipoRetorno ImprimirTextoIncorrecto(editor & e){
-// Muestra las palabras del texto que no se encuentran en el diccionario.
-// Ver más detalles en la letra del obligatorio.
-    auxImprimirTextoIncorrecto(getCabeza(e));
+    Diccionario dic = getDiccionario(e);
+    nodoD raiz = dic == NULL ? NULL : getRaiz(dic);
+    int numero = 1;
+    while (t != NULL) {
+        printf("%d:", numero++);
+        linea l = getInicio(t);
+        while (l != NULL) {
+            // Se vuelve a consultar porque el diccionario puede haber cambiado.
+            existeEnDic(l, raiz);
+            if (!getExiste(l)) {
+                Cadena palabra = getPalabra(l);
+                if (palabra != NULL) {
+                    printf(" %s", palabra);
+                    delete[] palabra;
+                }
+            }
+            l = Tail(l);
+        }
+        printf("\n");
+        t = TailTexto(t);
+    }
     return OK;
 }
-
