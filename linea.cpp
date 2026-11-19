@@ -144,7 +144,7 @@ void auxBP(texto txt, Posicion posicionPalabra) {
 TipoRetorno BorrarLinea(editor & e, Posicion posicionLinea) {
     int iposicionLinea = static_cast<int>(posicionLinea);
     
-    if (e == NULL || iposicionLinea == 0 || iposicionLinea > getCantLineas(e)) {
+    if (e == NULL || posicionLinea == 0 || posicionLinea > static_cast<Posicion>(getCantLineas(e))) {
         return ERROR;
     }
     
@@ -226,7 +226,7 @@ TipoRetorno InsertarLineaEnPosicion(editor & e, Posicion posicionLinea) {
     int iposicionLinea = static_cast<int>(posicionLinea);
     
     
-    if (e == NULL || iposicionLinea == 0 || iposicionLinea > getCantLineas(e) + 1) {
+    if (e == NULL || posicionLinea == 0 || posicionLinea > static_cast<Posicion>(getCantLineas(e)) + 1) {
         return ERROR;
     }
     
@@ -258,7 +258,7 @@ TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionP
     int iposicionLinea = static_cast<int>(posicionLinea);
     int iposicionPalabra = static_cast<int>(posicionPalabra);
     
-    if (e == NULL || iposicionLinea == 0 || iposicionLinea > getCantLineas(e)) {
+    if (e == NULL || posicionLinea == 0 || posicionLinea > static_cast<Posicion>(getCantLineas(e))) {
         return ERROR;
     }
     
@@ -267,7 +267,7 @@ TipoRetorno BorrarPalabra(editor & e, Posicion posicionLinea, Posicion posicionP
         iter = TailTexto(iter);
     }
     
-    if (iposicionPalabra == 0 || iposicionPalabra > getNPalabras(iter)) {
+    if (posicionPalabra == 0 || posicionPalabra > static_cast<Posicion>(getNPalabras(iter))) {
         return ERROR;
     }
     
@@ -291,13 +291,13 @@ TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicio
     int iposicionLinea = static_cast<int>(posicionLinea);
     int iposicionPalabra = static_cast<int>(posicionPalabra);
 
-    if (e == NULL || palabraAIngresar == NULL || iposicionLinea < 1 ||
-        iposicionLinea > getCantLineas(e)) return ERROR;
+    if (e == NULL || palabraAIngresar == NULL || posicionLinea == 0 ||
+        posicionLinea > static_cast<Posicion>(getCantLineas(e))) return ERROR;
 
     texto iter = getCabeza(e);
     for (int i = 1; i < iposicionLinea; i++) iter = TailTexto(iter);
 
-    if (iposicionPalabra < 1 || iposicionPalabra > getNPalabras(iter) + 1) return ERROR;
+    if (posicionPalabra == 0 || posicionPalabra > static_cast<Posicion>(getNPalabras(iter)) + 1) return ERROR;
 
     linea nuevo = crearLinea();
     reservarCadena(nuevo, strlen(palabraAIngresar) + 1);
@@ -353,7 +353,7 @@ TipoRetorno InsertarPalabra(editor & e, Posicion posicionLinea, Posicion posicio
 TipoRetorno BorrarOcurrenciasPalabraEnLinea(editor & e, Posicion posicionLinea, Cadena palabraABorrar) {
     int iposicionLinea = static_cast<int>(posicionLinea);
     
-    if (e == NULL || palabraABorrar == NULL || iposicionLinea == 0 || iposicionLinea > getCantLineas(e)) {
+    if (e == NULL || palabraABorrar == NULL || posicionLinea == 0 || posicionLinea > static_cast<Posicion>(getCantLineas(e))) {
         return ERROR;
     }
     
@@ -369,7 +369,7 @@ TipoRetorno BorrarOcurrenciasPalabraEnLinea(editor & e, Posicion posicionLinea, 
 TipoRetorno ImprimirLinea(editor & e, Posicion posicionLinea) {
     int iposicionLinea = static_cast<int>(posicionLinea);
 
-    if (e == NULL || iposicionLinea == 0 || iposicionLinea > getCantLineas(e)) {
+    if (e == NULL || posicionLinea == 0 || posicionLinea > static_cast<Posicion>(getCantLineas(e))) {
         return ERROR;
     }
 
