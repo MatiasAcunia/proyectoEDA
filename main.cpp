@@ -53,8 +53,9 @@ int main(){
 		ejecutado = false;
 		cout << "> ";
 
-		fgets (comando, MAX_COMANDO, stdin); // leo la linea entera del comando. 
-		pch = strtok (comando,"( ,)\n");
+		if (fgets(comando, MAX_COMANDO, stdin) == NULL) break;
+		pch = strtok(comando, "( ,)\n");
+		if (pch == NULL) continue;
 
 		if (strcasecmp (pch, "InsertarLinea") == 0){
 				retorno = InsertarLinea(e);
